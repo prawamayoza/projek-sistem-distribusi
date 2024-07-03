@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>{{ __('Daftar Pengguna') }}</span>
+                    <span>{{ __('Daftar User') }}</span>
                     <a href="{{ route('user.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
                 </div>
@@ -19,7 +19,7 @@
                                     <th scope="col">#</th>
                                     <th scope="col">Nama</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Peran</th>
+                                    <th scope="col">Akun</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -37,10 +37,12 @@
                                     <td>
                                         <a href="{{ route('user.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i
-                                                class="material-icons text-sm me-2">edit</i>Edit</a>
-                                        <button data-id="{{ $item->id }}" class="btn btn-sm btn-danger delete"
-                                            data-toggle="tooltip" data-placement="top" title="Hapus"><i
-                                                class="material-icons text-sm me-2">delete</i>Hapus</button>
+                                                class="material-icons text-sm me-2">edit</i> Edit</a>
+                                        <button value="{{ route('user.destroy', $item->id) }}"
+                                                            class="btn btn-sm btn-danger delete"
+                                                            data-toggle="tooltip" data-placement="top" title="Hapus"> <i
+                                                class="material-icons text-sm me-2">delete</i> Hapus
+                                        </button>   
                                     </td>
                                 </tr>
                                 @empty
