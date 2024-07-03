@@ -19,5 +19,5 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::resource('akun', UserController::class);
+Route::resource('user', UserController::class);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
