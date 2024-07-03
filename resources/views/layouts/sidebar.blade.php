@@ -25,6 +25,14 @@
             <span class="nav-link-text ms-1">Kelola user</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ request()->is('pelanggan*') ? 'active  bg-gradient-primary' : '' }}" href="{{route('pelanggan.index')}}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">person</i>
+            </div>
+            <span class="nav-link-text ms-1">Kelola Pelanggan</span>
+          </a>
+        </li>
       </ul>
     </div>
 
