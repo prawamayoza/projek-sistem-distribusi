@@ -21,7 +21,7 @@
                                     $aksi = 'Save';
                                 @endphp
                             @endif
-                            user
+                            User
                     </h4>
                     @if (@$user->exists)
                         <form id="myForm" class="forms-sample" enctype="multipart/form-data" method="POST"
@@ -113,7 +113,7 @@
 
                         <div class="form-group row mb-0 justify-content-end">
                             <div class="col-md-6 text-right">
-                                <button type="submit" class="btn btn-primary" id="submitButton">
+                                <button type="submit" class="btn btn-warning" id="submitButton">
                                 {{ $aksi}} <i class="material-icons opacity-10">save</i>
                                     <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                 </button>

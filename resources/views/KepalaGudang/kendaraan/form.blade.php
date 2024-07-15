@@ -6,11 +6,11 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="container-xxl flex-grow-1 container-p-y">
-                    <h4 class="w-bold py-3 mb-4"><span class="text-muted fw-light"> <a href="{{ route('pelanggan.index') }}"
+                    <h4 class="w-bold py-3 mb-4"><span class="text-muted fw-light"> <a href="{{ route('kendaraan.index') }}"
                                 class="btn btn-icon">
                                 <i class="material-icons opacity-10">arrow_back</i>
                             </a>
-                            @if (@$pelanggan->exists)
+                            @if (@$kendaraan->exists)
                                 Edit
                                 @php
                                     $aksi = 'Save';
@@ -21,22 +21,22 @@
                                     $aksi = 'Save';
                                 @endphp
                             @endif
-                            Pelanggan
+                            Kendaraan
                     </h4>
-                    @if (@$pelanggan->exists)
+                    @if (@$kendaraan->exists)
                         <form id="myForm" class="forms-sample" enctype="multipart/form-data" method="POST"
-                            action="{{ route('pelanggan.update', $pelanggan) }}">
+                            action="{{ route('kendaraan.update', $kendaraan) }}">
                             @method('put')
                         @else
                             <form id="myForm" class="forms-sample" enctype="multipart/form-data" method="POST"
-                                action="{{ route('pelanggan.store') }}">
+                                action="{{ route('kendaraan.store') }}">
                     @endif
                     {{ csrf_field() }}
 
                         <div class="input-group input-group-dynamic mb-4">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Nama</label>
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', @$pelanggan->name) }}" required autocomplete="name" autofocus placeholder="Nama Pelanggan" aria-label="Nama" aria-describedby="basic-addon1">
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', @$kendaraan->name) }}" required autocomplete="name" autofocus placeholder="Nama kendaraan" aria-label="Nama" aria-describedby="basic-addon1">
 
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -47,25 +47,11 @@
                         </div>
 
                         <div class="input-group input-group-dynamic mb-4">
-                            <label for="alamat" class="col-md-4 col-form-label text-md-right">Alamat</label>
+                            <label for="kapasitas" class="col-md-4 col-form-label text-md-right">Kapasitas Mobil</label>
 
                             <div class="col-md-6">
-                                <input id="alamat" type="alamat" class="form-control @error('alamat') is-invalid @enderror" name="alamat" value="{{ old('alamat', @$pelanggan->alamat) }}" required autocomplete="Alamat" placeholder="Alamat" aria-label="Alamat" aria-describedby="basic-addon1">
-
-                                @error('alamat')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="input-group input-group-dynamic mb-4">
-                            <label for="jumlah" class="col-md-4 col-form-label text-md-right">Jumlah Pemesanan</label>
-
-                            <div class="col-md-6">
-                                <input id="jumlah" type="number" class="form-control @error('jumlah') is-invalid @enderror" name="jumlah" value="{{ old('jumlah', @$pelanggan->jumlah) }}" required autocomplete="jumlah" placeholder="Jumlah" aria-label="jumlah" aria-describedby="basic-addon1">
-                                @error('jumlah')
+                                <input id="kapasitas" type="number" class="form-control @error('kapasitas') is-invalid @enderror" name="kapasitas" value="{{ old('kapasitas', @$kendaraan->kapasitas) }}" required autocomplete="kapasitas" placeholder="kapasitas" aria-label="kapasitas" aria-describedby="basic-addon1">
+                                @error('kapasitas')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

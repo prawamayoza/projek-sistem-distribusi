@@ -6,8 +6,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>{{ __('Daftar User') }}</span>
-                    <a href="{{ route('user.create') }}" class="btn btn-success btn-sm"><i
+                    <span>{{ __('Daftar Kendaraan') }}</span>
+                    <a href="{{ route('kendaraan.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
                 </div>
 
@@ -18,27 +18,21 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Nama</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Role</th>
+                                    <th scope="col">Kapasitas</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($user as $item)
+                                 @forelse ($kendaraan as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->name }}</td>
-                                    <td>{{ $item->email }}</td>
+                                    <td>{{ $item->kapasitas}} </td>
                                     <td>
-                                        @foreach($item->getRoleNames() as $role)
-                                        <div class="badge bg-warning">{{ $role }}</div>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('user.edit', $item->id) }}"
+                                        <a href="{{ route('kendaraan.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i
                                                 class="material-icons text-sm me-2">edit</i> Edit</a>
-                                        <button value="{{ route('user.destroy', $item->id) }}"
+                                        <button value="{{ route('kendaraan.destroy', $item->id) }}"
                                                             class="btn btn-sm btn-danger delete"
                                                             data-toggle="tooltip" data-placement="top" title="Hapus"> <i
                                                 class="material-icons text-sm me-2">delete</i> Hapus
@@ -47,9 +41,9 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">Tidak ada pengguna ditemukan</td>
+                                    <td colspan="5" class="text-center">Tidak ada data ditemukan</td>
                                 </tr>
-                                @endforelse
+                                @endforelse 
                             </tbody>
                         </table>
                     </div>

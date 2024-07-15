@@ -7,8 +7,12 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>{{ __('Daftar Pelanggan') }}</span>
-                    <a href="{{ route('pelanggan.create') }}" class="btn btn-success btn-sm"><i
-                            class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                    <div>
+                        <a href="{{ route('pelanggan.create') }}" class="btn btn-success btn-sm"><i
+                                class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                        <a href="" class="btn btn-success btn-sm"><i
+                                class="material-icons text-sm me-2">picture_as_pdf</i>Export Data</a>        
+                    </div>
                 </div>
 
                 <div class="card-body">

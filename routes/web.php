@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,5 @@ Route::get('/', function () {
 Auth::routes();
 Route::resource('user', UserController::class);
 Route::resource('pelanggan', PelangganController::class);
+Route::resource('kendaraan', KendaraanController::class);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
