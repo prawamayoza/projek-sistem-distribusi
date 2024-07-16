@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pelanggan extends Model
+class Pesanan extends Model
 {
     use HasFactory;
     protected $guarded = [
         'id'
     ];
     /**
-     * Get all of the pesanan for the Pelanggan
+     * Get the pelanggan that owns the Pesanan
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function pesanan()
+    public function pelanggan()
     {
-        return $this->hasMany(Pesanan::class);
+        return $this->belongsTo(Pelanggan::class);
     }
 }

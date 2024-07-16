@@ -23,7 +23,6 @@
                                     <th scope="col">#</th>
                                     <th scope="col">Nama</th>
                                     <th scope="col">Alamat</th>
-                                    <th scope="col">Jumlah Pesanan</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -33,7 +32,6 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->alamat }}</td>
-                                    <td>{{ $item->jumlah}} </td>
                                     <td>
                                         <a href="{{ route('pelanggan.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i

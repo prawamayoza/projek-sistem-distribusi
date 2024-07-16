@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
+use App\Models\Pesanan;
 use Illuminate\Http\Request;
 
 class PelangganController extends Controller
@@ -34,21 +35,33 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate the request
         $request->validate([
-            'name'                  => 'required',
-            'alamat'                => 'required',
-            'jumlah'                => 'required',
+            'name'       => 'required',
+            'alamat'     => 'required',
+            'produk.*'   => 'required|string',
+            'jumlah.*'   => 'required|integer',
         ], [
-            'name.required'            => 'Nama Pelanggan Wajib Dipilih',
-            'alamat.required'          => 'Alamat Pelanggan Wajib Diisi',
-            'jumlah.required'          => 'Jumlah Wajib Diisi',
+            'name.required'       => 'Nama Pelanggan Wajib Dipilih',
+            'alamat.required'     => 'Alamat Pelanggan Wajib Diisi',
+            'produk.*.required'   => 'Produk Wajib Diisi',
+            'jumlah.*.required'   => 'Jumlah Wajib Diisi',
         ]);
 
-        Pelanggan::create([
-            'name'          => $request->name,
-            'alamat'    => $request->alamat,
-            'jumlah'      => $request->jumlah,
+        // Create a new Pelanggan
+        $pelanggan = Pelanggan::create([
+            'name'    => $request->name,
+            'alamat'  => $request->alamat,
         ]);
+
+        // Create Pesanan for the Pelanggan
+        foreach ($request->produk as $index => $produk) {
+            Pesanan::create([
+                'pelanggan_id' => $pelanggan->id,
+                'produk'       => $produk,
+                'jumlah'       => $request->jumlah[$index],
+            ]);
+        }
 
         return redirect()->route('pelanggan.index')->with('success', 'Data Berhasil Ditambah');
     }
@@ -67,7 +80,9 @@ class PelangganController extends Controller
     public function edit(string $id)
     {
         $pelanggan = Pelanggan::findOrFail($id);
+        $pesanan   = Pesanan::where('pelanggan_id', $id)->orderBy('created_at', 'desc')->get();
         return view('KepalaGudang.pelanggan.form', [
+            'pesanan'       => $pesanan,
             'pelanggan'     => $pelanggan,
             'title'         => 'Edit Pelanggan'
         ]);
@@ -76,24 +91,39 @@ class PelangganController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Pelanggan $pelanggan)
     {
+        // Validate the request
         $request->validate([
-            'name'                  => 'required',
-            'alamat'                => 'required',
-            'jumlah'                => 'required',
+            'name'       => 'required',
+            'alamat'     => 'required',
+            'produk.*'   => 'required|string',
+            'jumlah.*'   => 'required|integer',
         ], [
-            'name.required'            => 'Nama Pelanggan Wajib Dipilih',
-            'alamat.required'          => 'Alamat Pelanggan Wajib Diisi',
-            'jumlah.required'          => 'Jumlah Wajib Diisi',
+            'name.required'       => 'Nama Pelanggan Wajib Dipilih',
+            'alamat.required'     => 'Alamat Pelanggan Wajib Diisi',
+            'produk.*.required'   => 'Produk Wajib Diisi',
+            'jumlah.*.required'   => 'Jumlah Wajib Diisi',
         ]);
-        $pelanggan   = Pelanggan::findOrFail($id);
-        $data       = [
-            'name'          => $request->name,
-            'alamat'        => $request->alamat,
-            'jumlah'        => $request->jumlah,
-        ];
-        $pelanggan->update($data);
+
+        // Update the Pelanggan
+        $pelanggan->update([
+            'name'    => $request->name,
+            'alamat'  => $request->alamat,
+        ]);
+
+        // Remove old Pesanan
+        $pelanggan->pesanan()->delete();
+
+        // Create new Pesanan for the Pelanggan
+        foreach ($request->produk as $index => $produk) {
+            Pesanan::create([
+                'pelanggan_id' => $pelanggan->id,
+                'produk'       => $produk,
+                'jumlah'       => $request->jumlah[$index],
+            ]);
+        }
+
         return redirect()->route('pelanggan.index')->with('success', 'Data Berhasil Diperbarui');
     }
 
@@ -104,8 +134,16 @@ class PelangganController extends Controller
     {
         $pelanggan = Pelanggan::find($id);
 
-        $pelanggan->delete();
+        if ($pelanggan) {
+            // Delete related orders first
+            $pelanggan->pesanan()->delete();
 
-        return response()->json(['status' => 'Data Telah Dihapus']);
+            // Delete the customer
+            $pelanggan->delete();
+
+            return response()->json(['status' => 'Data Telah Dihapus']);
+        }
+
+        return response()->json(['status' => 'Pelanggan tidak ditemukan'], 404);
     }
 }
