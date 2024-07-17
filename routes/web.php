@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataSetController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\UserController;
@@ -24,4 +25,5 @@ Auth::routes();
 Route::resource('user', UserController::class);
 Route::resource('pelanggan', PelangganController::class);
 Route::resource('kendaraan', KendaraanController::class);
+Route::resource('data-set', DataSetController::class);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

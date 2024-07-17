@@ -41,6 +41,14 @@
             <span class="nav-link-text ms-1">Kelola Kendaraan</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ request()->is('data-set*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('data-set.index')}}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">dataset</i>
+            </div>
+            <span class="nav-link-text ms-1">Kelola Data Set</span>
+          </a>
+        </li>
       </ul>
     </div>
 
