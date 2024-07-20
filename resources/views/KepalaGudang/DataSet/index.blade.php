@@ -29,6 +29,9 @@
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->tanggal}} </td>
                                     <td>
+                                        <a href="{{ route('data-set.show', $item->id) }}"
+                                            class="btn btn-info btn-sm"><i
+                                                class="material-icons text-sm me-2">edit</i> Detail</a>
                                         <a href="{{ route('data-set.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i
                                                 class="material-icons text-sm me-2">edit</i> Edit</a>

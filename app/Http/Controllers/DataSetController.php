@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Distribusi;
+use App\Models\JarakGudang;
 use App\Models\JarakPelanggan;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
@@ -39,11 +40,13 @@ class DataSetController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'              => 'required',
-            'tanggal'           => 'required|date',
-            'from_customer.*'   => 'required|exists:pelanggans,id',
-            'to_customer.*'     => 'required|exists:pelanggans,id',
-            'distance.*'        => 'required|numeric',
+            'name' => 'required',
+            'tanggal' => 'required|date',
+            'from_customer.*' => 'required|exists:pelanggans,id',
+            'to_customer.*' => 'required|exists:pelanggans,id',
+            'distance.*' => 'required|numeric',
+            'customer_to_warehouse.*' => 'required|exists:pelanggans,id',
+            'warehouse_distance.*' => 'required|numeric',
         ]);
 
         $distribusi = Distribusi::create([
@@ -54,27 +57,48 @@ class DataSetController extends Controller
         $distances = [];
         for ($i = 0; $i < count($request->from_customer); $i++) {
             $distances[] = [
-                'distribusi_id'     => $distribusi->id,
-                'from_customer'     => $request->from_customer[$i],
-                'to_customer'       => $request->to_customer[$i],
-                'distance'          => $request->distance[$i],
+                'distribusi_id' => $distribusi->id,
+                'from_customer' => $request->from_customer[$i],
+                'to_customer' => $request->to_customer[$i],
+                'distance' => $request->distance[$i],
             ];
         }
+
         foreach ($distances as $distance) {
             JarakPelanggan::create($distance);
         }
 
+        $warehouseDistances = [];
+        for ($i = 0; $i < count($request->customer_to_warehouse); $i++) {
+            $warehouseDistances[] = [
+                'distribusi_id' => $distribusi->id,
+                'from_customer' => $request->customer_to_warehouse[$i],
+                'distance' => $request->warehouse_distance[$i],
+            ];
+        }
+
+        foreach ($warehouseDistances as $warehouseDistance) {
+            JarakGudang::create($warehouseDistance);
+        }
+
         return redirect()->route('data-set.index')->with('success', 'Data saved successfully.');
     }
-
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
-    }
+        $distribusi = Distribusi::findOrFail($id);
+        $jarakPelanggan = JarakPelanggan::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
+        $jarakGudang = JarakGudang::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
+        return view('KepalaGudang.DataSet.detail', [
+            'distribusi' => $distribusi,
+            'jarakPelanggan' => $jarakPelanggan,
+            'jarakGudang' => $jarakGudang,
+            'title' => 'Detail Data Set Distribusi'
+        ]);
+    }    
 
     /**
      * Show the form for editing the specified resource.
@@ -83,10 +107,12 @@ class DataSetController extends Controller
     {
         $distribusi         = Distribusi::findOrFail($id);
         $jarakPelanggan     = JarakPelanggan::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
+        $jarakGudang        = JarakGudang::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
         $customers  = Pelanggan::all();
         return view('KepalaGudang.DataSet.form',[
             'distribusi'            => $distribusi,
             'jarakPelanggan'        => $jarakPelanggan,
+            'jarakGudang'           => $jarakGudang,
             'customers'             => $customers,
             'title'                 => 'Edit Data Set Distribusi'
         ]);
@@ -98,11 +124,13 @@ class DataSetController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name'              => 'required',
-            'tanggal'           => 'required|date',
-            'from_customer.*'   => 'required|exists:pelanggans,id',
-            'to_customer.*'     => 'required|exists:pelanggans,id',
-            'distance.*'        => 'required|numeric',
+            'name' => 'required',
+            'tanggal' => 'required|date',
+            'from_customer.*' => 'required|exists:pelanggans,id',
+            'to_customer.*' => 'required|exists:pelanggans,id',
+            'distance.*' => 'required|numeric',
+            'customer_to_warehouse.*' => 'required|exists:pelanggans,id',
+            'warehouse_distance.*' => 'required|numeric',
         ]);
 
         // Update data distribusi
@@ -114,21 +142,35 @@ class DataSetController extends Controller
 
         // Hapus data set lama
         JarakPelanggan::where('distribusi_id', $id)->delete();
+        JarakGudang::where('distribusi_id', $id)->delete();
 
-        // Siapkan data untuk tabel data_sets
+        // Siapkan data untuk tabel jarak_pelanggans
         $distances = [];
         for ($i = 0; $i < count($request->from_customer); $i++) {
             $distances[] = [
-                'from_customer'     => $request->from_customer[$i],
-                'to_customer'       => $request->to_customer[$i],
-                'distance'          => $request->distance[$i],
-                'distribusi_id'     => $distribusi->id, // Simpan id distribusi
+                'from_customer' => $request->from_customer[$i],
+                'to_customer' => $request->to_customer[$i],
+                'distance' => $request->distance[$i],
+                'distribusi_id' => $distribusi->id,
             ];
         }
 
-        // Simpan data ke tabel data_sets
         foreach ($distances as $distance) {
             JarakPelanggan::create($distance);
+        }
+
+        // Siapkan data untuk tabel jarak_gudangs
+        $warehouseDistances = [];
+        for ($i = 0; $i < count($request->customer_to_warehouse); $i++) {
+            $warehouseDistances[] = [
+                'distribusi_id' => $distribusi->id,
+                'from_customer' => $request->customer_to_warehouse[$i],
+                'distance' => $request->warehouse_distance[$i],
+            ];
+        }
+
+        foreach ($warehouseDistances as $warehouseDistance) {
+            JarakGudang::create($warehouseDistance);
         }
 
         return redirect()->route('data-set.index')->with('success', 'Data updated successfully.');
@@ -144,6 +186,7 @@ class DataSetController extends Controller
         if ($distribusi) {
             // Hapus semua data set yang terkait dengan distribusi ini
             JarakPelanggan::where('distribusi_id', $id)->delete();
+            JarakGudang::where('distribusi_id', $id)->delete();
 
             // Hapus distribusi itu sendiri
             $distribusi->delete();

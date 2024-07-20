@@ -6,7 +6,9 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="container-xxl flex-grow-1 container-p-y">
-                    <h4 class="w-bold py-3 mb-4"><span class="text-muted fw-light"> <a href="{{ route('kendaraan.index') }}"
+                    <h4 class="w-bold py-3 mb-4">
+                        <span class="text-muted fw-light"> 
+                            <a href="{{ route('kendaraan.index') }}"
                                 class="btn btn-icon">
                                 <i class="material-icons opacity-10">arrow_back</i>
                             </a>
@@ -59,14 +61,10 @@
                             </div>
                         </div>
 
-                        <div class="form-group row mb-0 justify-content-end">
-                            <div class="col-md-6 text-right">
                                 <button type="submit" class="btn btn-warning" id="submitButton">
                                 {{ $aksi}} <i class="material-icons opacity-10">save</i>
                                     <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                 </button>
-                            </div>
-                        </div>
                     </form>
 
                     <script>

@@ -50,8 +50,11 @@
                         </div>
 
                         <div class="form-group mb-4">
-                            <label for="distances" class="col-md-4 col-form-label text-md-right">Jarak Antar Pelanggan</label>
-                            <div class="col-md-12">
+                            <label for="distances" class="col-form-label d-flex justify-content-between align-items-center">
+                                Jarak Antar Pelanggan
+                                <button type="button" class="btn btn-success" id="addDistanceRow">Tambah Jarak</button>
+                            </label>
+                            <div class="table-responsive">
                                 <table class="table table-striped table-bordered" id="distancesTable">
                                     <thead>
                                         <tr>
@@ -113,14 +116,66 @@
                                         @endif
                                     </tbody>
                                 </table>
-                                <button type="button" class="btn btn-primary" id="addDistanceRow">Tambah Jarak</button>
                             </div>
                         </div>
 
-                                <button type="submit" class="btn btn-warning" id="submitButton">
-                                    Save <i class="material-icons opacity-10">save</i>
-                                    <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                </button>
+                        <div class="form-group mb-4">
+                            <label for="warehouse_distances" class="col-form-label d-flex justify-content-between align-items-center">
+                                Jarak Pelanggan Ke Gudang
+                                <button type="button" class="btn btn-success" id="addWarehouseDistanceRow">Tambah Jarak</button>
+                            </label>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered" id="warehouseDistancesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Pelanggan</th>
+                                            <th>Jarak (KM)</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if(isset($jarakGudang))
+                                            @foreach($jarakGudang as $data)
+                                                <tr>
+                                                    <td>
+                                                        <select name="customer_to_warehouse[]" class="form-control">
+                                                            @foreach($customers as $customer)
+                                                                <option value="{{ $customer->id }}" {{ $customer->id == $data->from_customer ? 'selected' : '' }}>
+                                                                    {{ $customer->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="warehouse_distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)">
+                                                    </td>
+                                                    <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td>
+                                                    <select name="customer_to_warehouse[]" class="form-control">
+                                                        @foreach($customers as $customer)
+                                                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="warehouse_distance[]" class="form-control" placeholder="Jarak (KM)">
+                                                </td>
+                                                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning" id="submitButton">
+                            Save <i class="material-icons opacity-10">save</i>
+                            <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        </button>
                     </form>
 
                     <script>
@@ -159,7 +214,28 @@
                             tableBody.appendChild(newRow);
                         });
 
-                        document.getElementById('distancesTable').addEventListener('click', function(event) {
+                        document.getElementById('addWarehouseDistanceRow').addEventListener('click', function() {
+                            var tableBody = document.querySelector('#warehouseDistancesTable tbody');
+                            var newRow = document.createElement('tr');
+
+                            newRow.innerHTML = `
+                                <td>
+                                    <select name="customer_to_warehouse[]" class="form-control">
+                                        @foreach($customers as $customer)
+                                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="warehouse_distance[]" class="form-control" placeholder="Jarak (KM)">
+                                </td>
+                                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+                            `;
+
+                            tableBody.appendChild(newRow);
+                        });
+
+                        document.addEventListener('click', function(event) {
                             if (event.target.classList.contains('remove-row')) {
                                 event.target.closest('tr').remove();
                             }
