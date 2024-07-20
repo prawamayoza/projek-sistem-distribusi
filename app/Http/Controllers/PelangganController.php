@@ -37,31 +37,24 @@ class PelangganController extends Controller
     {
         // Validate the request
         $request->validate([
-            'name'       => 'required',
-            'alamat'     => 'required',
-            'produk.*'   => 'required|string',
-            'jumlah.*'   => 'required|integer',
+            'name'          => 'required',
+            'alamat'        => 'required',
+            'no_telpon'     => 'required',
+
         ], [
-            'name.required'       => 'Nama Pelanggan Wajib Dipilih',
-            'alamat.required'     => 'Alamat Pelanggan Wajib Diisi',
-            'produk.*.required'   => 'Produk Wajib Diisi',
-            'jumlah.*.required'   => 'Jumlah Wajib Diisi',
+            'name.required'             => 'Nama Pelanggan Wajib Dipilih',
+            'alamat.required'           => 'Alamat Pelanggan Wajib Diisi',
+            'no_telepon.required'       => 'No telpon Pelanggan Wajib Diisi',
+
         ]);
 
         // Create a new Pelanggan
-        $pelanggan = Pelanggan::create([
-            'name'    => $request->name,
-            'alamat'  => $request->alamat,
-        ]);
+            Pelanggan::create([
+            'name'          => $request->name,
+            'alamat'        => $request->alamat,
+            'no_telpon'     => $request->no_telpon,
 
-        // Create Pesanan for the Pelanggan
-        foreach ($request->produk as $index => $produk) {
-            Pesanan::create([
-                'pelanggan_id' => $pelanggan->id,
-                'produk'       => $produk,
-                'jumlah'       => $request->jumlah[$index],
-            ]);
-        }
+        ]);
 
         return redirect()->route('pelanggan.index')->with('success', 'Data Berhasil Ditambah');
     }
@@ -71,7 +64,7 @@ class PelangganController extends Controller
      */
     public function show(string $id)
     {
-        //
+       //
     }
 
     /**
@@ -95,35 +88,22 @@ class PelangganController extends Controller
     {
         // Validate the request
         $request->validate([
-            'name'       => 'required',
-            'alamat'     => 'required',
-            'produk.*'   => 'required|string',
-            'jumlah.*'   => 'required|integer',
+            'name'          => 'required',
+            'alamat'        => 'required',
+            'no_telpon'     => 'required',
+
         ], [
             'name.required'       => 'Nama Pelanggan Wajib Dipilih',
             'alamat.required'     => 'Alamat Pelanggan Wajib Diisi',
-            'produk.*.required'   => 'Produk Wajib Diisi',
-            'jumlah.*.required'   => 'Jumlah Wajib Diisi',
+            'no_telepon'          => 'No telepon Wajib Diisi'
         ]);
 
         // Update the Pelanggan
         $pelanggan->update([
             'name'    => $request->name,
             'alamat'  => $request->alamat,
+            'no_telepon'
         ]);
-
-        // Remove old Pesanan
-        $pelanggan->pesanan()->delete();
-
-        // Create new Pesanan for the Pelanggan
-        foreach ($request->produk as $index => $produk) {
-            Pesanan::create([
-                'pelanggan_id' => $pelanggan->id,
-                'produk'       => $produk,
-                'jumlah'       => $request->jumlah[$index],
-            ]);
-        }
-
         return redirect()->route('pelanggan.index')->with('success', 'Data Berhasil Diperbarui');
     }
 
