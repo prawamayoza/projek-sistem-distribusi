@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('data_sets', function (Blueprint $table) {
+        Schema::create('jarak_pelanggans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('distribusi_id');
             $table->unsignedBigInteger('from_customer');
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('data_sets');
+        Schema::dropIfExists('jarak_pelanggans');
     }
 };

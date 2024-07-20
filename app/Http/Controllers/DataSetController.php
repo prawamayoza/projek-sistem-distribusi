@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DataSet;
 use App\Models\Distribusi;
+use App\Models\JarakPelanggan;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 
@@ -61,7 +61,7 @@ class DataSetController extends Controller
             ];
         }
         foreach ($distances as $distance) {
-            DataSet::create($distance);
+            JarakPelanggan::create($distance);
         }
 
         return redirect()->route('data-set.index')->with('success', 'Data saved successfully.');
@@ -81,14 +81,14 @@ class DataSetController extends Controller
      */
     public function edit(string $id)
     {
-        $distribusi = Distribusi::findOrFail($id);
-        $dataSet    = DataSet::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
+        $distribusi         = Distribusi::findOrFail($id);
+        $jarakPelanggan     = JarakPelanggan::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
         $customers  = Pelanggan::all();
         return view('KepalaGudang.DataSet.form',[
-            'distribusi'    => $distribusi,
-            'dataSet'       => $dataSet,
-            'customers'     => $customers,
-            'title'         => 'Edit Data Set Distribusi'
+            'distribusi'            => $distribusi,
+            'jarakPelanggan'        => $jarakPelanggan,
+            'customers'             => $customers,
+            'title'                 => 'Edit Data Set Distribusi'
         ]);
     }
 
@@ -113,7 +113,7 @@ class DataSetController extends Controller
         ]);
 
         // Hapus data set lama
-        DataSet::where('distribusi_id', $id)->delete();
+        JarakPelanggan::where('distribusi_id', $id)->delete();
 
         // Siapkan data untuk tabel data_sets
         $distances = [];
@@ -128,7 +128,7 @@ class DataSetController extends Controller
 
         // Simpan data ke tabel data_sets
         foreach ($distances as $distance) {
-            DataSet::create($distance);
+            JarakPelanggan::create($distance);
         }
 
         return redirect()->route('data-set.index')->with('success', 'Data updated successfully.');
@@ -143,7 +143,7 @@ class DataSetController extends Controller
 
         if ($distribusi) {
             // Hapus semua data set yang terkait dengan distribusi ini
-            DataSet::where('distribusi_id', $id)->delete();
+            JarakPelanggan::where('distribusi_id', $id)->delete();
 
             // Hapus distribusi itu sendiri
             $distribusi->delete();

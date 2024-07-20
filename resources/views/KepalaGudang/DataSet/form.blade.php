@@ -62,8 +62,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(isset($dataSet))
-                                            @foreach($dataSet as $data)
+                                        @if(isset($jarakPelanggan))
+                                            @foreach($jarakPelanggan as $data)
                                                 <tr>
                                                     <td>
                                                         <select name="from_customer[]" class="form-control">
