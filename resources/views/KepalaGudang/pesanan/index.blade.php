@@ -6,10 +6,13 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>{{ __('Daftar Pelanggan') }}</span>
+                    <span>{{ __('Daftar Pesanan Pelanggan') }}</span>
                     <div>
-                        <a href="{{ route('pelanggan.create') }}" class="btn btn-success btn-sm"><i
-                                class="material-icons text-sm me-2">add</i>Tambah Data</a>       
+                        <a href="{{ route('pesanan.create') }}" class="btn btn-success btn-sm"><i
+                                class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                        <a href="" class="btn btn-success btn-sm"><i
+                                class="material-icons text-sm me-2">file_download</i>Export Data</a>        
+                                
                     </div>
                 </div>
 
@@ -19,24 +22,24 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Alamat</th>
-                                    <th scope="col">No telpon</th>
+                                    <th scope="col">Nama Pelanggan</th>
+                                    <th scope="col">Tanggal Pesanan</th>
+                                    <th scope="col">Total Pesanan</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                 @forelse ($pelanggan as $item)
+                                 @forelse ($pesanan as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->name }}</td>
-                                    <td>{{ $item->alamat }}</td>
-                                    <td>{{ $item->no_telpon }}</td>
+                                    <td>{{ $item->pelanggan->name }}</td>
+                                    <td>{{ $item->tanggal }}</td>
+                                    <td>{{ $item->total }}</td>
                                     <td>
-                                        <a href="{{ route('pelanggan.edit', $item->id) }}"
+                                        <a href="{{ route('pesanan.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i
                                                 class="material-icons text-sm me-2">edit</i> Edit</a>
-                                        <button value="{{ route('pelanggan.destroy', $item->id) }}"
+                                        <button value="{{ route('pesanan.destroy', $item->id) }}"
                                                             class="btn btn-sm btn-danger delete"
                                                             data-toggle="tooltip" data-placement="top" title="Hapus"> <i
                                                 class="material-icons text-sm me-2">delete</i> Hapus

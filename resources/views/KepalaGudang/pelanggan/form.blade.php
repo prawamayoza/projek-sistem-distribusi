@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="input-group input-group-dynamic mb-4">
-                        <label for="no_telepon" class="col-md-4 col-form-label text-md-right">NO Telpon</label>
+                        <label for="no_telepon" class="col-md-4 col-form-label text-md-right">No Telpon</label>
                         <div class="col-md-6">
                             <input id="no_telpon" type="no_telpon" class="form-control @error('no_telpon') is-invalid @enderror" name="no_telpon" value="{{ old('no_telpon', @$pelanggan->no_telpon) }}" required autocomplete="no_telpon" placeholder="Mausukkan data No Telpon Pelanggan" aria-label="no_telpon" aria-describedby="basic-addon1">
                             @error('no_telpon')
@@ -66,7 +66,6 @@
                             @enderror
                         </div>
                     </div>
-                        
                             <button type="submit" class="btn btn-warning" id="submitButton">
                                 {{ $aksi }} <i class="material-icons opacity-10">save</i>
                                 <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>

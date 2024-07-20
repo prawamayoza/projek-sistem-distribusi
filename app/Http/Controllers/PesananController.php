@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
 class PesananController extends Controller
@@ -13,7 +14,11 @@ class PesananController extends Controller
      */
     public function index()
     {
-        //
+        $pesanan =  Pesanan::orderByDesc('created_at')->get();
+        return view('KepalaGudang.pesanan.index',[
+            'pesanan'       => $pesanan,
+            'title'         => 'Pesanan Pelanggan'
+        ]);
     }
 
     /**
@@ -21,11 +26,9 @@ class PesananController extends Controller
      */
     public function create(Request $request)
     {
-        $pelanggan_id = $request->query('pelanggan_id');
-
-        // Anda dapat menambahkan logika tambahan jika diperlukan
+        $pelanggan = Pelanggan::all();
         return view('KepalaGudang.pesanan.form',[
-            'pelanggan_id'  => $pelanggan_id,
+            'pelanggan'     => $pelanggan,
             'title'         => 'Tambah Pesanan'
         ]);
     }
@@ -35,25 +38,28 @@ class PesananController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data yang diterima
-        $validatedData = $request->validate([
+        $request->validate([
             'pelanggan_id' => 'required|exists:pelanggans,id',
-            'produk.*' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'produk.*' => 'required|string',
             'jumlah.*' => 'required|integer|min:1',
         ]);
-
-        // Loop through each order item and save
+        $pesanan = new Pesanan;
+        $pesanan->pelanggan_id = $request->pelanggan_id;
+        $pesanan->tanggal = $request->tanggal;
+        $pesanan->total = $request->total;
+        $pesanan->save();
+    
         foreach ($request->produk as $index => $produk) {
-            $pesanan = new Pesanan();
-            $pesanan->pelanggan_id = $request->pelanggan_id;
-            $pesanan->produk = $produk;
-            $pesanan->jumlah = $request->jumlah[$index];
-            $pesanan->save();
+            $pesananProduk = new Produk(); 
+            $pesananProduk->pesanan_id = $pesanan->id;
+            $pesananProduk->pelanggan_id = $request->pelanggan_id; 
+            $pesananProduk->produk = $produk;
+            $pesananProduk->jumlah = $request->jumlah[$index];
+            $pesananProduk->save();
         }
-
-        // Redirect dengan pesan sukses
-        return redirect()->route('pelanggan.show', $request->pelanggan_id)
-                         ->with('success', 'Pesanan berhasil ditambahkan');
+    
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan created successfully.');
     }
 
 
@@ -71,14 +77,15 @@ class PesananController extends Controller
      */
     public function edit($id)
     {
-        $pesanan = Pesanan::findOrFail($id);
-    
-        // Assuming $pelanggan_id is part of the Pesanan model or is retrievable from it.
-        $pelanggan_id = $pesanan->pelanggan_id;
+        
+        $pesanan    = Pesanan::findOrFail($id);
+        $pelanggan  = Pelanggan::all();
+        $produk     = Produk::where('pesanan_id', $id)->get(); 
     
         return view('KepalaGudang.pesanan.form', [
             'pesanan'       => $pesanan,
-            'pelanggan_id'  => $pelanggan_id,
+            'pelanggan'     => $pelanggan,
+            'produk'        => $produk,
             'title'         => 'Edit Pesanan'
         ]);
     }
@@ -88,28 +95,32 @@ class PesananController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'pelanggan_id' => 'required|exists:pelanggans,id',
-            'produk.*' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'produk.*' => 'required|string',
             'jumlah.*' => 'required|integer|min:1',
         ]);
-
+    
         $pesanan = Pesanan::findOrFail($id);
         $pesanan->pelanggan_id = $request->pelanggan_id;
-        
-        // Delete existing items
-        $pesanan->delete();
-
+        $pesanan->tanggal = $request->tanggal;
+        $pesanan->total = $request->total;
+        $pesanan->save();
+    
+        Produk::where('pesanan_id', $id)->delete();
+    
+        // Save the updated products
         foreach ($request->produk as $index => $produk) {
-            $pesanan->create([
-                'pelanggan_id' => $pesanan,
-                'produk' => $produk,
-                'jumlah' => $request->jumlah[$index],
-            ]);
+            $pesananProduk = new Produk();
+            $pesananProduk->pesanan_id = $pesanan->id;
+            $pesananProduk->pelanggan_id = $request->pelanggan_id;
+            $pesananProduk->produk = $produk;
+            $pesananProduk->jumlah = $request->jumlah[$index];
+            $pesananProduk->save();
         }
-
-        return redirect()->route('pelanggan.show', $request->pelanggan_id)
-                         ->with('success', 'Pesanan berhasil diperbarui');
+    
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan updated successfully.');
     }
 
     /**
@@ -117,6 +128,16 @@ class PesananController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $pesanan = Pesanan::find($id);
+
+        if ($pesanan) {
+            Produk::where('pesanan_id', $id)->delete();
+
+            $pesanan->delete();
+
+            return response()->json(['status' => 'Data Telah Dihapus']);
+        }
+
+        return response()->json(['status' => 'Distribusi tidak ditemukan'], 404);
     }
 }
