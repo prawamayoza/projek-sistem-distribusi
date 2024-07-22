@@ -20,4 +20,22 @@ class Pelanggan extends Model
     {
         return $this->hasMany(Pesanan::class);
     }
+    /**
+     * Get all of the pesanan for the Pelanggan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function JarakGudang()
+    {
+        return $this->hasMany(JarakGudang::class, 'from_customer');
+    }
+    /**
+     * Get all of the JarakPelanggan for the Pelanggan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function JarakPelanggan()
+    {
+        return $this->hasMany(JarakPelanggan::class, 'to_customer');
+    }
 }

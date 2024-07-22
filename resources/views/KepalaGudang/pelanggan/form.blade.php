@@ -58,7 +58,7 @@
                     <div class="input-group input-group-dynamic mb-4">
                         <label for="no_telepon" class="col-md-4 col-form-label text-md-right">No Telpon</label>
                         <div class="col-md-6">
-                            <input id="no_telpon" type="no_telpon" class="form-control @error('no_telpon') is-invalid @enderror" name="no_telpon" value="{{ old('no_telpon', @$pelanggan->no_telpon) }}" required autocomplete="no_telpon" placeholder="Mausukkan data No Telpon Pelanggan" aria-label="no_telpon" aria-describedby="basic-addon1">
+                            <input id="no_telpon" type="number" class="form-control @error('no_telpon') is-invalid @enderror" name="no_telpon" value="{{ old('no_telpon', @$pelanggan->no_telpon) }}" required autocomplete="no_telpon" placeholder="Mausukkan data No Telpon Pelanggan" aria-label="no_telpon" aria-describedby="basic-addon1" min="1">
                             @error('no_telpon')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

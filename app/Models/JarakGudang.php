@@ -11,4 +11,13 @@ class JarakGudang extends Model
     protected $guarded = [
         'id'
     ];
+        /**
+     * Get the pelanggan that owns the Pesanan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pelanggan()
+    {
+        return $this->belongsTo(Pelanggan::class, 'from_customer');
+    }
 }

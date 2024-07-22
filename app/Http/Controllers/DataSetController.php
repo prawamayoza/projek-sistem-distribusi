@@ -87,18 +87,32 @@ class DataSetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $distribusi = Distribusi::findOrFail($id);
-        $jarakPelanggan = JarakPelanggan::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
-        $jarakGudang = JarakGudang::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
-        return view('KepalaGudang.DataSet.detail', [
-            'distribusi' => $distribusi,
-            'jarakPelanggan' => $jarakPelanggan,
-            'jarakGudang' => $jarakGudang,
-            'title' => 'Detail Data Set Distribusi'
-        ]);
-    }    
+public function show(string $id)
+{
+    $distribusi = Distribusi::findOrFail($id);
+    $jarakPelanggan = JarakPelanggan::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
+    $jarakGudang = JarakGudang::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
+    
+    // Get customer IDs that are present in jarakPelanggan or jarakGudang
+    $customerIds = $jarakPelanggan->pluck('from_customer')
+        ->merge($jarakPelanggan->pluck('to_customer'))
+        ->merge($jarakGudang->pluck('customer_id'))
+        ->unique()
+        ->toArray();
+    
+    // Fetch only the customers that match the IDs
+    $customers = Pelanggan::whereIn('id', $customerIds)->get();
+
+    return view('KepalaGudang.DataSet.detail', [
+        'distribusi' => $distribusi,
+        'jarakPelanggan' => $jarakPelanggan,
+        'jarakGudang' => $jarakGudang,
+        'customers' => $customers,
+        'title' => 'Detail Data Set Distribusi'
+    ]);
+}
+
+      
 
     /**
      * Show the form for editing the specified resource.

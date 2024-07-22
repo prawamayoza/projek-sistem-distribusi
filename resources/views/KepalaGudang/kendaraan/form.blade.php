@@ -52,7 +52,7 @@
                             <label for="kapasitas" class="col-md-4 col-form-label text-md-right">Kapasitas Mobil</label>
 
                             <div class="col-md-6">
-                                <input id="kapasitas" type="number" class="form-control @error('kapasitas') is-invalid @enderror" name="kapasitas" value="{{ old('kapasitas', @$kendaraan->kapasitas) }}" required autocomplete="kapasitas" placeholder="kapasitas" aria-label="kapasitas" aria-describedby="basic-addon1">
+                                <input id="kapasitas" type="number" class="form-control @error('kapasitas') is-invalid @enderror" name="kapasitas" value="{{ old('kapasitas', @$kendaraan->kapasitas) }}" required autocomplete="kapasitas" placeholder="kapasitas" aria-label="kapasitas" aria-describedby="basic-addon1" min="1">
                                 @error('kapasitas')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
