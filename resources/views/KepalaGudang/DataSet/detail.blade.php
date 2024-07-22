@@ -32,21 +32,31 @@
                                         <th scope="row">{{ $customer->name }}</th>
                                         <td>
                                             @php
-                                                $warehouseDistance = $jarakGudang->firstWhere('customer_id', $customer->id);
+                                                // Fetch warehouse distance for the current customer
+                                                $warehouseDistance = $jarakGudang->Where('from_customer', $customer->id);
                                             @endphp
-                                            {{ $warehouseDistance ? $warehouseDistance->distance : '0' }}
+                                            @forelse ($warehouseDistance as $item)
+                                            {{$item->distance}}
+                                            @empty
+                                            <span class="text-danger">No data</span>
+                                            @endforelse
                                         </td>
                                         @foreach ($customers as $otherCustomer)
                                             @if ($customer->id == $otherCustomer->id)
                                                 <td>-</td>
                                             @else
                                                 @php
+                                                    // Fetch distance between current customer and other customer
                                                     $distance = $jarakPelanggan->firstWhere(function($item) use ($customer, $otherCustomer) {
                                                         return ($item->from_customer == $customer->id && $item->to_customer == $otherCustomer->id) ||
-                                                               ($item->from_customer == $otherCustomer->id && $item->to_customer == $customer->id);
+                                                            ($item->from_customer == $otherCustomer->id && $item->to_customer == $customer->id);
                                                     });
                                                 @endphp
-                                                <td>{{ $distance ? $distance->distance : '0' }}</td>
+                                                @if($distance)
+                                                    <td>{{ $distance->distance }}</td>
+                                                @else
+                                                    <td>-</td>
+                                                @endif
                                             @endif
                                         @endforeach
                                     </tr>
