@@ -25,6 +25,7 @@ class PesananExport implements FromCollection, WithHeadings, WithMapping
         return [
             'No',
             'Nama Pelanggan',
+            'Alamat Pelanggan',
             'Tanggal Pesanan',
             'Total Pesanan',
         ];
@@ -42,6 +43,7 @@ class PesananExport implements FromCollection, WithHeadings, WithMapping
         return [
             $id++,
             $pesanan->pelanggan->name,
+            $pesanan->pelanggan->alamat,
             $pesanan->tanggal,
             $pesanan->total,
         ];
