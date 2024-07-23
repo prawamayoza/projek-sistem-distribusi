@@ -87,7 +87,7 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)" required min="0">
+                                                        <input type="number" name="distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)" required min="0" step="0.01">
                                                     </td>
                                                     <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                                 </tr>
@@ -109,7 +109,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="distance[]" class="form-control" placeholder="Jarak (KM)" required min="0">
+                                                    <input type="number" name="distance[]" class="form-control" placeholder="Jarak (KM)" required min="0" step="0.01">
                                                 </td>
                                                 <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                             </tr>
@@ -147,7 +147,7 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="warehouse_distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)">
+                                                        <input type="number" name="warehouse_distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)" step="0.01">
                                                     </td>
                                                     <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                                 </tr>
@@ -162,7 +162,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="warehouse_distance[]" class="form-control" placeholder="Jarak (KM)">
+                                                    <input type="number" name="warehouse_distance[]" class="form-control" placeholder="Jarak (KM)" step="0.01">
                                                 </td>
                                                 <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                             </tr>
@@ -206,7 +206,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="distance[]" class="form-control" placeholder="Jarak (KM)">
+                                    <input type="number" name="distance[]" class="form-control" placeholder="Jarak (KM)" step="0.01">
                                 </td>
                                 <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                             `;
@@ -227,7 +227,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="warehouse_distance[]" class="form-control" placeholder="Jarak (KM)">
+                                    <input type="number" name="warehouse_distance[]" class="form-control" placeholder="Jarak (KM)" step="0.01">
                                 </td>
                                 <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                             `;
