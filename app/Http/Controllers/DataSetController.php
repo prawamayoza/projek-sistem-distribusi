@@ -118,23 +118,30 @@ class DataSetController extends Controller
     //display perhitungan
     public function perhitungan($distribusiId)
     {
-        // Retrieve all savings for the specified distribusi_id
+        $distribusi = Distribusi::find($distribusiId);
+        if (!$distribusi) {
+            abort(404, 'Distribusi not found');
+        }
+        
+        $distributionDate = $distribusi->tanggal;
+    
         $savings = Saving::where('distribusi_id', $distribusiId)->get();
         
-        // Fetch all customers
-        $customers = Pelanggan::all(); // Adjust if you have a different model name
+        $customers = Pelanggan::all(); 
     
-        // Initialize savingsWithTotals array
         $savingsWithTotals = [];
         
-        // Initialize total orders array
         $totalOrders = [];
     
         foreach ($savings as $saving) {
-            $totalFromCustomer = Pesanan::where('pelanggan_id', $saving->from_customer)->sum('total');
-            $totalToCustomer = Pesanan::where('pelanggan_id', $saving->to_customer)->sum('total');
+            $totalFromCustomer = Pesanan::where('pelanggan_id', $saving->from_customer)
+                ->whereDate('tanggal', $distributionDate)
+                ->sum('total');
+                
+            $totalToCustomer = Pesanan::where('pelanggan_id', $saving->to_customer)
+                ->whereDate('tanggal', $distributionDate)
+                ->sum('total');
             
-            // Update savingsWithTotals array
             $savingsWithTotals[$saving->from_customer][$saving->to_customer] = [
                 'savings' => $saving->savings,
                 'total_from_customer' => $totalFromCustomer,
@@ -142,15 +149,14 @@ class DataSetController extends Controller
             ];
         }
         
-        // Calculate total orders for each customer
         foreach ($customers as $customer) {
-            $totalOrders[$customer->id] = Pesanan::where('pelanggan_id', $customer->id)->sum('total');
+            $totalOrders[$customer->id] = Pesanan::where('pelanggan_id', $customer->id)
+                ->whereDate('tanggal', $distributionDate)
+                ->sum('total');
         }
         
         return view('KepalaGudang.DataSet.saving', compact('savingsWithTotals', 'customers', 'totalOrders'));
     }
-    
-    
 
     /**
      * Display the specified resource.
