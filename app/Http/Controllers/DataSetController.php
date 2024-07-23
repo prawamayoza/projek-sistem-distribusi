@@ -92,29 +92,49 @@ class DataSetController extends Controller
     {
         $jarakGudangs = JarakGudang::where('distribusi_id', $distribusiId)->get();
         $jarakPelangans = JarakPelanggan::where('distribusi_id', $distribusiId)->get();
-        $pesanans = Pesanan::all();
-
+        
+        $existingSavings = Saving::where('distribusi_id', $distribusiId)->get()->keyBy(function ($saving) {
+            return $saving->from_customer . '-' . $saving->to_customer;
+        });
+    
         foreach ($jarakPelangans as $jp) {
             $d_ij = $jp->distance;
-
+            
             $d_0i = $jarakGudangs->firstWhere('from_customer', $jp->from_customer)->distance;
             $d_0j = $jarakGudangs->firstWhere('from_customer', $jp->to_customer)->distance;
-
+    
             $savingValue = $d_0i + $d_0j - $d_ij;
-
-            // Simpan ke dalam tabel savings
-            Saving::updateOrCreate(
-                [
+    
+            if ($jp->from_customer === $jp->to_customer) {
+                $savingValue = 0;
+            }
+    
+            $key = $jp->from_customer . '-' . $jp->to_customer;
+    
+            if (isset($existingSavings[$key])) {
+                $existingSavings[$key]->update([
+                    'savings' => $savingValue
+                ]);
+            } else {
+                // Create new record
+                Saving::create([
                     'from_customer' => $jp->from_customer,
                     'to_customer' => $jp->to_customer,
-                    'distribusi_id' => $distribusiId
-                ],
-                [
+                    'distribusi_id' => $distribusiId,
                     'savings' => $savingValue
-                ]
-            );
+                ]);
+            }
         }
-    }
+    
+        $existingSavings->each(function ($saving) use ($jarakPelangans) {
+            $key = $saving->from_customer . '-' . $saving->to_customer;
+            if (!$jarakPelangans->contains(function ($jp) use ($key) {
+                return ($jp->from_customer . '-' . $jp->to_customer) === $key;
+            })) {
+                $saving->delete();
+            }
+        });
+    }    
     //display perhitungan
     public function perhitungan($distribusiId)
     {
@@ -126,18 +146,18 @@ class DataSetController extends Controller
         $distributionDate = $distribusi->tanggal;
     
         $savings = Saving::where('distribusi_id', $distribusiId)->get();
-        
-        $customers = Pelanggan::all(); 
+    
+        $customerIds = $savings->pluck('from_customer')->merge($savings->pluck('to_customer'))->unique();
+        $customers = Pelanggan::whereIn('id', $customerIds)->get();
     
         $savingsWithTotals = [];
-        
         $totalOrders = [];
     
         foreach ($savings as $saving) {
             $totalFromCustomer = Pesanan::where('pelanggan_id', $saving->from_customer)
                 ->whereDate('tanggal', $distributionDate)
                 ->sum('total');
-                
+            
             $totalToCustomer = Pesanan::where('pelanggan_id', $saving->to_customer)
                 ->whereDate('tanggal', $distributionDate)
                 ->sum('total');
@@ -157,6 +177,7 @@ class DataSetController extends Controller
         
         return view('KepalaGudang.DataSet.saving', compact('savingsWithTotals', 'customers', 'totalOrders'));
     }
+    
 
     /**
      * Display the specified resource.
@@ -253,6 +274,8 @@ class DataSetController extends Controller
             JarakGudang::create($warehouseDistance);
         }
 
+        $this->calculateSavings($distribusi->id);
+
         return redirect()->route('data-set.index')->with('success', 'Data updated successfully.');
     }
 
@@ -262,18 +285,22 @@ class DataSetController extends Controller
     public function destroy(string $id)
     {
         $distribusi = Distribusi::find($id);
-
+    
         if ($distribusi) {
             // Hapus semua data set yang terkait dengan distribusi ini
             JarakPelanggan::where('distribusi_id', $id)->delete();
             JarakGudang::where('distribusi_id', $id)->delete();
-
+            
+            // Hapus semua data saving yang terkait dengan distribusi ini
+            Saving::where('distribusi_id', $id)->delete();
+    
             // Hapus distribusi itu sendiri
             $distribusi->delete();
-
+    
             return response()->json(['status' => 'Data Telah Dihapus']);
         }
-
+    
         return response()->json(['status' => 'Distribusi tidak ditemukan'], 404);
     }
+    
 }
