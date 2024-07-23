@@ -175,7 +175,13 @@ class DataSetController extends Controller
                 ->sum('total');
         }
         
-        return view('KepalaGudang.DataSet.saving', compact('savingsWithTotals', 'customers', 'totalOrders'));
+        return view('KepalaGudang.DataSet.saving',[
+            'distribusi'        => $distribusi,
+            'savingsWithTotals' => $savingsWithTotals,
+            'customers'         => $customers,
+            'totalOrders'       => $totalOrders,
+            'title'             => 'Saving Matrix'
+        ]);
     }
     
 

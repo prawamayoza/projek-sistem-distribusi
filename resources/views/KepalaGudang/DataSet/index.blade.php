@@ -6,7 +6,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>{{ __('Daftar Data Set Distribusi') }}</span>
+                    <h4 class="mb-0">Daftar Data Set Distribusi </h4>
+
                     <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
                 </div>
@@ -33,8 +34,7 @@
                                             class="btn btn-info btn-sm"><i
                                                 class="material-icons text-sm me-2">remove_red_eye</i>Detail </a>
                                         <a href="{{ route('saving_matrix.show', $item->id) }}"
-                                            class="btn btn-info btn-sm"><i
-                                                class="material-icons text-sm me-2">remove_red_eye</i> Perhitungan</a>        
+                                            class="btn btn-info btn-sm"><i class="material-icons text-sm me-2">calculate</i> Perhitungan</a>        
                                         <a href="{{ route('data-set.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i
                                                 class="material-icons text-sm me-2">edit</i> Edit</a>

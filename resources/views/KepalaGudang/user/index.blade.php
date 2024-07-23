@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>{{ __('Daftar User') }}</span>
+                    <h4 class="mb-0">Daftar User </h4>
                     <a href="{{ route('user.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
                 </div>

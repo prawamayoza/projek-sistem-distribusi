@@ -11,8 +11,8 @@
                             <a href="{{ route('pesanan.index') }}" class="btn btn-icon">
                                 <i class="material-icons opacity-10">arrow_back</i>
                             </a>
-                            {{ isset($pesanan) ? 'Edit Pesanan' : 'Tambah Pesanan' }}
                         </span>
+                            {{ isset($pesanan) ? 'Edit Pesanan' : 'Tambah Pesanan' }}
                     </h4>
                     <form id="myForm" class="forms-sample" enctype="multipart/form-data" method="POST" action="{{ isset($pesanan) ? route('pesanan.update', $pesanan) : route('pesanan.store') }}">
                         @csrf

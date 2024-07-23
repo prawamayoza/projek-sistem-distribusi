@@ -2,24 +2,18 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="container-xxl flex-grow-1 container-p-y">
-                    <h4 class="fw-bold py-3 mb-4">
-                        <span class="text-muted fw-light">
-                            <a href="{{ route('data-set.index') }}" class="btn btn-icon">
-                                <i class="material-icons opacity-10">arrow_back</i>
-                            </a>
-                        </span>
-                        {{ $title }}
-                    </h4>
-
+                <div class="card-header">
+                    <h4 class="mb-0">Data Jarak {{$distribusi->name}} </h4>
+                </div>
+                <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table matrix-table">
+                        <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Nama Pelanggan</th>
+                                    <th> </th>
                                     <th>Jarak Gudang (KM)</th>
                                     @foreach ($customers as $customer)
                                         <th>{{ $customer->name }}</th>
@@ -27,34 +21,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($customers as $customer)
+                                @foreach ($customers as $index => $customer)
                                     <tr>
                                         <th scope="row">{{ $customer->name }}</th>
                                         <td>
                                             @php
-                                                $warehouseDistance = $jarakGudang->Where('from_customer', $customer->id);
+                                                $warehouseDistance = $jarakGudang->where('from_customer', $customer->id)->first();
                                             @endphp
-                                            @forelse ($warehouseDistance as $item)
-                                            {{$item->distance}}
-                                            @empty
-                                            <span class="text-danger">No data</span>
-                                            @endforelse
+                                            @if ($warehouseDistance)
+                                                {{ $warehouseDistance->distance }}
+                                            @else
+                                                <span class="text-danger">No data</span>
+                                            @endif
                                         </td>
-                                        @foreach ($customers as $otherCustomer)
+                                        @foreach ($customers as $otherIndex => $otherCustomer)
                                             @if ($customer->id == $otherCustomer->id)
                                                 <td>-</td>
-                                            @else
+                                            @elseif ($index < $otherIndex)
                                                 @php
                                                     $distance = $jarakPelanggan->firstWhere(function($item) use ($customer, $otherCustomer) {
                                                         return ($item->from_customer == $customer->id && $item->to_customer == $otherCustomer->id) ||
-                                                            ($item->from_customer == $otherCustomer->id && $item->to_customer == $customer->id);
+                                                               ($item->from_customer == $otherCustomer->id && $item->to_customer == $customer->id);
                                                     });
                                                 @endphp
-                                                @if($distance)
+                                                @if ($distance)
                                                     <td>{{ $distance->distance }}</td>
                                                 @else
                                                     <td>-</td>
                                                 @endif
+                                            @else
+                                                <td></td>
                                             @endif
                                         @endforeach
                                     </tr>
@@ -62,7 +58,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -71,26 +66,25 @@
 
 @push('styles')
 <style>
-    .matrix-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .matrix-table th, .matrix-table td {
+    .table-bordered {
         border: 1px solid #ddd;
-        padding: 8px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .table th, .table td {
         text-align: center;
+        vertical-align: middle;
     }
 
-    .matrix-table th {
+    .table thead th {
         background-color: #f4f4f4;
-        position: sticky;
-        top: 0;
-        z-index: 1;
     }
 
-    .matrix-table tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
+    .text-danger {
+        color: #dc3545;
     }
 </style>
 @endpush
