@@ -6,6 +6,8 @@ use App\Models\Distribusi;
 use App\Models\JarakGudang;
 use App\Models\JarakPelanggan;
 use App\Models\Pelanggan;
+use App\Models\Pesanan;
+use App\Models\Saving;
 use Illuminate\Http\Request;
 
 class DataSetController extends Controller
@@ -81,8 +83,74 @@ class DataSetController extends Controller
             JarakGudang::create($warehouseDistance);
         }
 
+        $this->calculateSavings($distribusi->id);
+
         return redirect()->route('data-set.index')->with('success', 'Data saved successfully.');
     }
+
+    public function calculateSavings($distribusiId)
+    {
+        $jarakGudangs = JarakGudang::where('distribusi_id', $distribusiId)->get();
+        $jarakPelangans = JarakPelanggan::where('distribusi_id', $distribusiId)->get();
+        $pesanans = Pesanan::all();
+
+        foreach ($jarakPelangans as $jp) {
+            $d_ij = $jp->distance;
+
+            $d_0i = $jarakGudangs->firstWhere('from_customer', $jp->from_customer)->distance;
+            $d_0j = $jarakGudangs->firstWhere('from_customer', $jp->to_customer)->distance;
+
+            $savingValue = $d_0i + $d_0j - $d_ij;
+
+            // Simpan ke dalam tabel savings
+            Saving::updateOrCreate(
+                [
+                    'from_customer' => $jp->from_customer,
+                    'to_customer' => $jp->to_customer,
+                    'distribusi_id' => $distribusiId
+                ],
+                [
+                    'savings' => $savingValue
+                ]
+            );
+        }
+    }
+    //display perhitungan
+    public function perhitungan($distribusiId)
+    {
+        // Retrieve all savings for the specified distribusi_id
+        $savings = Saving::where('distribusi_id', $distribusiId)->get();
+        
+        // Fetch all customers
+        $customers = Pelanggan::all(); // Adjust if you have a different model name
+    
+        // Initialize savingsWithTotals array
+        $savingsWithTotals = [];
+        
+        // Initialize total orders array
+        $totalOrders = [];
+    
+        foreach ($savings as $saving) {
+            $totalFromCustomer = Pesanan::where('pelanggan_id', $saving->from_customer)->sum('total');
+            $totalToCustomer = Pesanan::where('pelanggan_id', $saving->to_customer)->sum('total');
+            
+            // Update savingsWithTotals array
+            $savingsWithTotals[$saving->from_customer][$saving->to_customer] = [
+                'savings' => $saving->savings,
+                'total_from_customer' => $totalFromCustomer,
+                'total_to_customer' => $totalToCustomer
+            ];
+        }
+        
+        // Calculate total orders for each customer
+        foreach ($customers as $customer) {
+            $totalOrders[$customer->id] = Pesanan::where('pelanggan_id', $customer->id)->sum('total');
+        }
+        
+        return view('KepalaGudang.DataSet.saving', compact('savingsWithTotals', 'customers', 'totalOrders'));
+    }
+    
+    
 
     /**
      * Display the specified resource.

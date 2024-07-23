@@ -16,7 +16,7 @@
                     </h4>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table matrix-table">
                             <thead>
                                 <tr>
                                     <th>Nama Pelanggan</th>
@@ -45,7 +45,6 @@
                                                 <td>-</td>
                                             @else
                                                 @php
-                                                    // Fetch distance between current customer and other customer
                                                     $distance = $jarakPelanggan->firstWhere(function($item) use ($customer, $otherCustomer) {
                                                         return ($item->from_customer == $customer->id && $item->to_customer == $otherCustomer->id) ||
                                                             ($item->from_customer == $otherCustomer->id && $item->to_customer == $customer->id);
@@ -69,4 +68,31 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<style>
+    .matrix-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .matrix-table th, .matrix-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .matrix-table th {
+        background-color: #f4f4f4;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .matrix-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+</style>
+@endpush
+
 @endsection
