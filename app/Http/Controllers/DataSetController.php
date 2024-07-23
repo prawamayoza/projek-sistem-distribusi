@@ -15,7 +15,7 @@ class DataSetController extends Controller
      */
     public function index()
     {
-        $distribusi =   Distribusi::all();
+        $distribusi =   Distribusi::orderByDesc('created_at')->get();
         return view('KepalaGudang.DataSet.index',[
             'distribusi'    =>$distribusi,
             'title'         =>'Kelola Data Set'
@@ -92,18 +92,12 @@ class DataSetController extends Controller
         $distribusi = Distribusi::findOrFail($id);
         $jarakPelanggan = JarakPelanggan::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
         $jarakGudang = JarakGudang::where('distribusi_id', $id)->orderBy('created_at', 'desc')->get();
-    
-        // Debugging
-        // dd($jarakGudang, $jarakPelanggan);
-    
-        // Get customer IDs that are present in jarakPelanggan or jarakGudang
+
         $customerIds = $jarakPelanggan->pluck('from_customer')
             ->merge($jarakPelanggan->pluck('to_customer'))
             ->merge($jarakGudang->pluck('customer_id'))
             ->unique()
             ->toArray();
-    
-        // Fetch only the customers that match the IDs
         $customers = Pelanggan::whereIn('id', $customerIds)->get();
     
         return view('KepalaGudang.DataSet.detail', [
@@ -114,8 +108,6 @@ class DataSetController extends Controller
             'title' => 'Detail Data Set Distribusi'
         ]);
     }    
-
-      
 
     /**
      * Show the form for editing the specified resource.
@@ -150,14 +142,12 @@ class DataSetController extends Controller
             'warehouse_distance.*' => 'required|numeric',
         ]);
 
-        // Update data distribusi
         $distribusi = Distribusi::findOrFail($id);
         $distribusi->update([
             'name' => $request->name,
             'tanggal' => $request->tanggal,
         ]);
 
-        // Hapus data set lama
         JarakPelanggan::where('distribusi_id', $id)->delete();
         JarakGudang::where('distribusi_id', $id)->delete();
 
@@ -176,7 +166,6 @@ class DataSetController extends Controller
             JarakPelanggan::create($distance);
         }
 
-        // Siapkan data untuk tabel jarak_gudangs
         $warehouseDistances = [];
         for ($i = 0; $i < count($request->customer_to_warehouse); $i++) {
             $warehouseDistances[] = [

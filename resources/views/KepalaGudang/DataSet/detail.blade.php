@@ -32,7 +32,6 @@
                                         <th scope="row">{{ $customer->name }}</th>
                                         <td>
                                             @php
-                                                // Fetch warehouse distance for the current customer
                                                 $warehouseDistance = $jarakGudang->Where('from_customer', $customer->id);
                                             @endphp
                                             @forelse ($warehouseDistance as $item)

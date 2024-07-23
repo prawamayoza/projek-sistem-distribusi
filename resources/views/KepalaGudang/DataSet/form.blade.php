@@ -87,7 +87,7 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)" required min="1">
+                                                        <input type="number" name="distance[]" class="form-control" value="{{ $data->distance }}" placeholder="Jarak (KM)" required min="0">
                                                     </td>
                                                     <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                                 </tr>
@@ -109,7 +109,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number" name="distance[]" class="form-control" placeholder="Jarak (KM)">
+                                                    <input type="number" name="distance[]" class="form-control" placeholder="Jarak (KM)" required min="0">
                                                 </td>
                                                 <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                             </tr>
