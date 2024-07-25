@@ -27,6 +27,8 @@
   <link id="pagestyle" href="{{asset("/assets/css/material-dashboard.css?v=3.1.0")}}" rel="stylesheet" />
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  @yield('head')
+  @stack('styles')
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">

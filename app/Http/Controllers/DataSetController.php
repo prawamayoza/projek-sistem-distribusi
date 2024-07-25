@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Distribusi;
 use App\Models\JarakGudang;
 use App\Models\JarakPelanggan;
+use App\Models\Kendaraan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\Saving;
@@ -134,57 +135,119 @@ class DataSetController extends Controller
                 $saving->delete();
             }
         });
-    }    
-    //display perhitungan
+    }
     public function perhitungan($distribusiId)
     {
+        // Retrieve the Distribusi record
         $distribusi = Distribusi::find($distribusiId);
         if (!$distribusi) {
             abort(404, 'Distribusi not found');
         }
-        
+    
         $distributionDate = $distribusi->tanggal;
     
+        // Retrieve savings for the given distribusi_id
         $savings = Saving::where('distribusi_id', $distribusiId)->get();
     
+        // Extract unique customer IDs from the savings
         $customerIds = $savings->pluck('from_customer')->merge($savings->pluck('to_customer'))->unique();
         $customers = Pelanggan::whereIn('id', $customerIds)->get();
     
+        // Prepare data structure to hold savings and total orders
         $savingsWithTotals = [];
         $totalOrders = [];
     
+        // Calculate total orders and savings for each customer pair
         foreach ($savings as $saving) {
             $totalFromCustomer = Pesanan::where('pelanggan_id', $saving->from_customer)
                 ->whereDate('tanggal', $distributionDate)
                 ->sum('total');
-            
+    
             $totalToCustomer = Pesanan::where('pelanggan_id', $saving->to_customer)
                 ->whereDate('tanggal', $distributionDate)
                 ->sum('total');
-            
+    
             $savingsWithTotals[$saving->from_customer][$saving->to_customer] = [
                 'savings' => $saving->savings,
                 'total_from_customer' => $totalFromCustomer,
                 'total_to_customer' => $totalToCustomer
             ];
         }
-        
+    
+        // Calculate total orders for each customer
         foreach ($customers as $customer) {
             $totalOrders[$customer->id] = Pesanan::where('pelanggan_id', $customer->id)
                 ->whereDate('tanggal', $distributionDate)
                 ->sum('total');
         }
-        
-        return view('KepalaGudang.DataSet.saving',[
+    
+        // Group customers into routes based on highest savings and truck capacity
+        $routes = $this->groupRoutes($savingsWithTotals, $totalOrders);
+        $trucks = Kendaraan::all(); 
+    
+        // Return view with the necessary data
+        return view('KepalaGudang.DataSet.saving', [
             'distribusi'        => $distribusi,
             'savingsWithTotals' => $savingsWithTotals,
             'customers'         => $customers,
             'totalOrders'       => $totalOrders,
-            'title'             => 'Saving Matrix'
+            'routes'            => $routes,
+            'trucks'            => $trucks,
+            'title'             => 'Perhitungan'
         ]);
     }
     
-
+    private function groupRoutes($savingsWithTotals, $totalOrders)
+    {
+        $trucks = Kendaraan::all();
+        $routes = [];
+        $visitedCustomers = []; // Tambahkan variabel ini untuk melacak pelanggan yang sudah diproses
+    
+        foreach ($trucks as $truck) {
+            $remainingCapacity = $truck->kapasitas;
+            $routePoints = [];
+    
+            // Flatten the savings array and sort by savings in descending order
+            $sortedSavings = collect($savingsWithTotals)->flatMap(function ($toCustomers, $fromCustomer) {
+                return collect($toCustomers)->map(function ($data, $toCustomer) use ($fromCustomer) {
+                    return [
+                        'from_customer' => $fromCustomer,
+                        'to_customer' => $toCustomer,
+                        'savings' => $data['savings'],
+                        'total_from_customer' => $data['total_from_customer']
+                    ];
+                });
+            })->sortByDesc('savings');
+    
+            // Iterate over sorted savings to create routes
+            foreach ($sortedSavings as $saving) {
+                $fromCustomer = $saving['from_customer'];
+                $totalDemand = $totalOrders[$fromCustomer] ?? 0;
+    
+                // Tambahkan kondisi untuk memeriksa pelanggan yang sudah diproses
+                if (!in_array($fromCustomer, $visitedCustomers) && $totalDemand > 0 && $totalDemand <= $remainingCapacity) {
+                    $routePoints[] = [
+                        'distance' => $saving['savings'],
+                        'location' => Pelanggan::find($fromCustomer)->name,
+                        'demand' => $totalDemand
+                    ];
+                    $remainingCapacity -= $totalDemand;
+                    $visitedCustomers[] = $fromCustomer; // Tandai pelanggan sebagai sudah diproses
+                }
+            }
+    
+            if (!empty($routePoints)) {
+                $routes[] = [
+                    'truck_name' => $truck->name,
+                    'truck_capacity' => $truck->kapasitas,
+                    'points' => $routePoints,
+                    'total_demand' => $truck->kapasitas - $remainingCapacity
+                ];
+            }
+        }
+        return $routes;
+    }
+    
     /**
      * Display the specified resource.
      */

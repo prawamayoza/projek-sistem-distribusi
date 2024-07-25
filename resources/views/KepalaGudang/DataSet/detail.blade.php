@@ -6,7 +6,11 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">Data Jarak {{$distribusi->name}} </h4>
+                    <h4 class="mb-0">
+                        <a href="{{ route('data-set.index') }}" class="btn btn-icon">
+                            <i class="material-icons opacity-10">arrow_back</i>
+                        </a> 
+                        Data Jarak {{$distribusi->name}} </h4>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -36,7 +40,7 @@
                                         </td>
                                         @foreach ($customers as $otherIndex => $otherCustomer)
                                             @if ($customer->id == $otherCustomer->id)
-                                                <td>-</td>
+                                                <td>0</td>
                                             @elseif ($index < $otherIndex)
                                                 @php
                                                     $distance = $jarakPelanggan->firstWhere(function($item) use ($customer, $otherCustomer) {
@@ -44,13 +48,9 @@
                                                                ($item->from_customer == $otherCustomer->id && $item->to_customer == $customer->id);
                                                     });
                                                 @endphp
-                                                @if ($distance)
                                                     <td>{{ $distance->distance }}</td>
-                                                @else
-                                                    <td>-</td>
-                                                @endif
                                             @else
-                                                <td></td>
+                                                <td>-</td>
                                             @endif
                                         @endforeach
                                     </tr>
