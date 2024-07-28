@@ -144,8 +144,6 @@ class DataSetController extends Controller
             abort(404, 'Distribusi not found');
         }
     
-        $distributionDate = $distribusi->tanggal;
-    
         // Retrieve savings for the given distribusi_id
         $savings = Saving::where('distribusi_id', $distribusiId)->get();
     
@@ -160,11 +158,11 @@ class DataSetController extends Controller
         // Calculate total orders and savings for each customer pair
         foreach ($savings as $saving) {
             $totalFromCustomer = Pesanan::where('pelanggan_id', $saving->from_customer)
-                ->whereDate('tanggal', $distributionDate)
+                ->whereDate('tanggal', $distribusi->tanggal)
                 ->sum('total');
     
             $totalToCustomer = Pesanan::where('pelanggan_id', $saving->to_customer)
-                ->whereDate('tanggal', $distributionDate)
+                ->whereDate('tanggal', $distribusi->tanggal)
                 ->sum('total');
     
             $savingsWithTotals[$saving->from_customer][$saving->to_customer] = [
@@ -177,31 +175,48 @@ class DataSetController extends Controller
         // Calculate total orders for each customer
         foreach ($customers as $customer) {
             $totalOrders[$customer->id] = Pesanan::where('pelanggan_id', $customer->id)
-                ->whereDate('tanggal', $distributionDate)
+                ->whereDate('tanggal', $distribusi->tanggal)
                 ->sum('total');
         }
     
         // Group customers into routes based on highest savings and truck capacity
         $routes = $this->groupRoutes($savingsWithTotals, $totalOrders);
-        $trucks = Kendaraan::all(); 
+    
+        // Retrieve distances from `jarak_gudang` for nearest neighbor tab
+        $jarakGudang = JarakGudang::where('distribusi_id', $distribusiId)->get();
+        $nearestRoutes = [];
+        foreach ($routes as $route) {
+            $truckName = $route['truck_name'];
+            foreach ($route['points'] as $point) {
+                $fromCustomer = Pelanggan::where('name', $point['location'])->first();
+                if ($fromCustomer) {
+                    $distance = $jarakGudang->firstWhere('from_customer', $fromCustomer->id);
+                    $nearestRoutes[$truckName][] = [
+                        'location' => $point['location'],
+                        'distance' => $distance ? $distance->distance : 0
+                    ];
+                }
+            }
+        }
     
         // Return view with the necessary data
         return view('KepalaGudang.DataSet.saving', [
-            'distribusi'        => $distribusi,
+            'distribusi' => $distribusi,
             'savingsWithTotals' => $savingsWithTotals,
-            'customers'         => $customers,
-            'totalOrders'       => $totalOrders,
-            'routes'            => $routes,
-            'trucks'            => $trucks,
-            'title'             => 'Perhitungan'
+            'customers' => $customers,
+            'totalOrders' => $totalOrders,
+            'routes' => $routes,
+            'nearestRoutes' => $nearestRoutes, // Pass nearest routes data
+            'title' => 'Perhitungan'
         ]);
     }
+    
     
     private function groupRoutes($savingsWithTotals, $totalOrders)
     {
         $trucks = Kendaraan::all();
         $routes = [];
-        $visitedCustomers = []; // Tambahkan variabel ini untuk melacak pelanggan yang sudah diproses
+        $visitedCustomers = [];
     
         foreach ($trucks as $truck) {
             $remainingCapacity = $truck->kapasitas;
@@ -224,7 +239,7 @@ class DataSetController extends Controller
                 $fromCustomer = $saving['from_customer'];
                 $totalDemand = $totalOrders[$fromCustomer] ?? 0;
     
-                // Tambahkan kondisi untuk memeriksa pelanggan yang sudah diproses
+                // Check if customer has already been visited and if the demand fits the truck capacity
                 if (!in_array($fromCustomer, $visitedCustomers) && $totalDemand > 0 && $totalDemand <= $remainingCapacity) {
                     $routePoints[] = [
                         'distance' => $saving['savings'],
@@ -232,7 +247,7 @@ class DataSetController extends Controller
                         'demand' => $totalDemand
                     ];
                     $remainingCapacity -= $totalDemand;
-                    $visitedCustomers[] = $fromCustomer; // Tandai pelanggan sebagai sudah diproses
+                    $visitedCustomers[] = $fromCustomer; // Mark customer as visited
                 }
             }
     
@@ -247,6 +262,7 @@ class DataSetController extends Controller
         }
         return $routes;
     }
+    
     
     /**
      * Display the specified resource.

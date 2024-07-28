@@ -23,6 +23,9 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plan" role="tab" aria-controls="plan" aria-selected="false">Pengelompokan Rute</a>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="plan-tab" data-toggle="tab" href="#nearest" role="tab" aria-controls="plan" aria-selected="false">Nearest Neighboar</a>
+                </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <!-- Saving Matrix Tab -->
@@ -91,6 +94,32 @@
                                             <td colspan="2" class="text-center">TOTAL</td>
                                             <td class="total-cell">{{ $route['total_demand'] }}</td>
                                         </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nearest" role="tabpanel" aria-labelledby="plan-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Truk</th>
+                                    <th>Jarak dari Gudang ke Titik (KM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($nearestRoutes as $truckName => $routes)
+                                <tr>
+                                    <td rowspan="{{ count($routes) }}">{{ $truckName }}</td>
+                                    @foreach($routes as $index => $route)
+                                        @if ($index > 0)
+                                            <tr>
+                                        @endif
+                                        <td>{{ $route['distance'] ?? 0 }} km - {{ $route['location'] }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
