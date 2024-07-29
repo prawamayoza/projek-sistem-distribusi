@@ -124,8 +124,37 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
                 
+                    <h5>Detail Iterasi Jarak</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Truk</th>
+                                    <th>Dari Lokasi</th>
+                                    <th>Ke Lokasi</th>
+                                    <th>Jarak (KM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($remainingDistances as $truckName => $distances)
+                                <tr>
+                                    <td rowspan="{{ count($distances) }}">{{ $truckName }}</td>
+                                    @foreach($distances as $index => $distance)
+                                        @if ($index > 0)
+                                            <tr>
+                                        @endif
+                                        <td>{{ $distance['from_location'] }}</td>
+                                        <td>{{ $distance['to_location'] }}</td>
+                                        <td>{{ $distance['distance'] }} km</td>
+                                    </tr>
+                                    @endforeach
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
