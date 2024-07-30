@@ -19,6 +19,7 @@
                                     <th scope="col">#</th>
                                     <th scope="col">Nama</th>
                                     <th scope="col">Kapasitas</th>
+                                    <th scope="col">Jarak Tempuh (KM)/Liter</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -28,6 +29,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->kapasitas}} </td>
+                                    <td>{{ $item->jarakPerliter}} </td>
                                     <td>
                                         <a href="{{ route('kendaraan.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i

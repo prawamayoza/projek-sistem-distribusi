@@ -60,6 +60,19 @@
                             </div>
                         </div>
 
+                        <div class="input-group input-group-dynamic mb-4">
+                            <label for="kapasitas" class="col-md-4 col-form-label text-md-right">Jarak Tempuh (KM)/Liter</label>
+
+                            <div class="col-md-6">
+                                <input id="jarakPerliter" type="number" class="form-control @error('jarakPerliter') is-invalid @enderror" name="jarakPerliter" value="{{ old('jarakPerliter', @$kendaraan->jarakPerliter) }}" required autocomplete="jarakPerliter" placeholder="jarakPerliter" aria-label="jarakPerliter" aria-describedby="basic-addon1" min="1">
+                                @error('jarakPerliter')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
                                 <button type="submit" class="btn btn-warning" id="submitButton">
                                 {{ $aksi}} <i class="material-icons opacity-10">save</i>
                                     <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>

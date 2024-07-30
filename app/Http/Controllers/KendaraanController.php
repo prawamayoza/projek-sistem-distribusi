@@ -35,16 +35,21 @@ class KendaraanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'                  => 'required',
-            'kapasitas'             => 'required',
+            'name'                      => 'required',
+            'kapasitas'                 => 'required',
+            'jarakPerliter'             => 'required',
+
         ], [
-            'name.required'            => 'Nama Pelanggan Wajib Dipilih',
-            'kapasitas.required'          => 'Kapasitas Wajib Diisi',
+            'name.required'                     => 'Nama Pelanggan Wajib Dipilih',
+            'kapasitas.required'                => 'Kapasitas Wajib Diisi',
+            'jarakPerliter.required'            => 'Kapasitas Wajib Diisi',
         ]);
 
         Kendaraan::create([
-            'name'          => $request->name,
-            'kapasitas'     => $request->kapasitas,
+            'name'              => $request->name,
+            'kapasitas'         => $request->kapasitas,
+            'jarakPerliter'     => $request->jarakPerliter,
+
         ]);
         return redirect()->route('kendaraan.index')->with('success', 'Data Berhasil Ditambah');
 
@@ -76,16 +81,20 @@ class KendaraanController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name'                  => 'required',
-            'kapasitas'             => 'required'
+            'name'                      => 'required',
+            'kapasitas'                 => 'required',
+            'jarakPerliter'             => 'required',
+
         ], [
-            'name.required'            => 'Nama Mobil Wajib Dipilih',
-            'kapasitas.required'       => 'Kapasitas Wajib Diisi',
+            'name.required'                     => 'Nama Pelanggan Wajib Dipilih',
+            'kapasitas.required'                => 'Kapasitas Wajib Diisi',
+            'jarakPerliter.required'            => 'Kapasitas Wajib Diisi',
         ]);
         $kendaraan   = Kendaraan::findOrFail($id);
         $data       = [
-            'name'          => $request->name,
-            'kapasitas'     => $request->kapasitas,
+            'name'              => $request->name,
+            'kapasitas'         => $request->kapasitas,
+            'jarakPerliter'     => $request->jarakPerliter,
         ];
         $kendaraan->update($data);
         return redirect()->route('kendaraan.index')->with('success', 'Data Berhasil Diperbarui');
