@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@section('head')
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-@endsection
-
 @section('content')
 <div class="container">
     <div class="card">
@@ -30,6 +26,7 @@
             <div class="tab-content" id="myTabContent">
                 <!-- Saving Matrix Tab -->
                 <div class="tab-pane fade show active" id="saving-matrix" role="tabpanel" aria-labelledby="saving-matrix-tab">
+                    <h5>Matrix Penghematan</h5>
                     <div class="table-responsive">
                         <table class="table matrix-table table-bordered table-hover">
                             <thead>
@@ -65,6 +62,7 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+                    <h5>Pengelompokan Rute Yang Akan Dituju</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -77,7 +75,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($routes as $route)
+                                @foreach($groupedRoutes as $route)
                                     <tr>
                                         <td rowspan="{{ count($route['points']) + 1 }}">{{ $route['truck_name'] }}</td>
                                         <td rowspan="{{ count($route['points']) + 1 }}">{{ $route['truck_capacity'] }}</td>
@@ -100,6 +98,7 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="nearest" role="tabpanel" aria-labelledby="plan-tab">
+                    <h5>Penentuan Titik Terdekat Dengan Gudang</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -154,6 +153,42 @@
                             </tbody>
                         </table>
                     </div>
+                    <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Truk</th>
+                                <th>Rute Tempuh</th>
+                                <th>Total Jarak (KM)</th>
+                                <th>Kapasitas Muatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($remainingDistances as $truckName => $routes)
+                                @php
+                                    // Temukan data yang sesuai untuk nama truk di groupedRoutes
+                                    $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
+                                    $totalDemand = $groupedRoute['total_demand'] ?? '-';
+                                    
+                                    // Generate route string and total distance
+                                    $routeStr = 'G-';
+                                    $routeStr .= $smallestDistances[$truckName]['location'] . '-';
+                                    $totalDistance = $smallestDistances[$truckName]['distance'];
+                                    foreach ($routes as $route) {
+                                        $routeStr .= $route['to_location'] . '-';
+                                        $totalDistance += $route['distance'];
+                                    }
+                                    $routeStr .= 'G';
+                                @endphp
+                                <tr>
+                                    <td>{{ $truckName }}</td>
+                                    <td>{{ $routeStr }}</td>
+                                    <td>{{ number_format($totalDistance, 1) }}</td>
+                                    <td>{{ $totalDemand }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

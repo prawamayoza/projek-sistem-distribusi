@@ -180,12 +180,12 @@ class DataSetController extends Controller
         }
     
         // Group customers into routes based on highest savings and truck capacity
-        $routes = $this->groupRoutes($savingsWithTotals, $totalOrders);
+        $groupedRoutes = $this->groupRoutes($savingsWithTotals, $totalOrders);
     
         // Retrieve distances from `jarak_gudang` for nearest neighbor tab
         $jarakGudang = JarakGudang::where('distribusi_id', $distribusiId)->get();
         $nearestRoutes = [];
-        foreach ($routes as $route) {
+        foreach ($groupedRoutes as $route) {
             $truckName = $route['truck_name'];
             foreach ($route['points'] as $point) {
                 $fromCustomer = Pelanggan::where('name', $point['location'])->first();
@@ -268,14 +268,13 @@ class DataSetController extends Controller
                 }
             }
         }
-    
         // Return view with the necessary data
         return view('KepalaGudang.DataSet.saving', [
             'distribusi' => $distribusi,
             'savingsWithTotals' => $savingsWithTotals,
             'customers' => $customers,
             'totalOrders' => $totalOrders,
-            'routes' => $routes,
+            'groupedRoutes' => $groupedRoutes,
             'nearestRoutes' => $nearestRoutes, // Pass nearest routes data
             'smallestDistances' => $smallestDistances, // Pass smallest distances data
             'remainingDistances' => $remainingDistances, // Pass remaining distances data
@@ -333,7 +332,6 @@ class DataSetController extends Controller
         }
         return $routes;
     }
-    
     
     /**
      * Display the specified resource.
