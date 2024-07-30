@@ -14,7 +14,7 @@
         <div class="card-body">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link active" id="saving-matrix-tab" data-toggle="tab" href="#saving-matrix" role="tab" aria-controls="saving-matrix" aria-selected="true">Matrix Penghematan</a>
+                    <a class="nav-link active" id="saving-matrix-tab" data-toggle="tab" href="#saving-matrix" role="tab" aria-controls="saving-matrix" aria-selected="true">Saving Matrix</a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plan" role="tab" aria-controls="plan" aria-selected="false">Pengelompokan Rute</a>
@@ -26,7 +26,7 @@
             <div class="tab-content" id="myTabContent">
                 <!-- Saving Matrix Tab -->
                 <div class="tab-pane fade show active" id="saving-matrix" role="tabpanel" aria-labelledby="saving-matrix-tab">
-                    <h5>Matrix Penghematan</h5>
+                    <h5>Saving Matrix</h5>
                     <div class="table-responsive">
                         <table class="table matrix-table table-bordered table-hover">
                             <thead>
@@ -154,41 +154,56 @@
                         </table>
                     </div>
                     <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Truk</th>
-                                <th>Rute Tempuh</th>
-                                <th>Total Jarak (KM)</th>
-                                <th>Kapasitas Muatan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($remainingDistances as $truckName => $routes)
-                                @php
-                                    // Temukan data yang sesuai untuk nama truk di groupedRoutes
-                                    $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
-                                    $totalDemand = $groupedRoute['total_demand'] ?? '-';
-                                    
-                                    // Generate route string and total distance
-                                    $routeStr = 'G-';
-                                    $routeStr .= $smallestDistances[$truckName]['location'] . '-';
-                                    $totalDistance = $smallestDistances[$truckName]['distance'];
-                                    foreach ($routes as $route) {
-                                        $routeStr .= $route['to_location'] . '-';
-                                        $totalDistance += $route['distance'];
-                                    }
-                                    $routeStr .= 'G';
-                                @endphp
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
                                 <tr>
-                                    <td>{{ $truckName }}</td>
-                                    <td>{{ $routeStr }}</td>
-                                    <td>{{ number_format($totalDistance, 1) }}</td>
-                                    <td>{{ $totalDemand }}</td>
+                                    <th>Truk</th>
+                                    <th>Rute Tempuh</th>
+                                    <th>Total Jarak (KM)</th>
+                                    <th>Pemakaian BBM (Liter)</th>
+                                    <th>Harga Solar/Liter</th>
+                                    <th>Total (Rp)</th>
+                                    <th>Kapasitas Muatan</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach($remainingDistances as $truckName => $routes)
+                                    @php
+                                        // Temukan data yang sesuai untuk nama truk di groupedRoutes
+                                        $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
+                                        $totalDemand = $groupedRoute['total_demand'] ?? '-';
+                                        $fuelUsedPerKm = $groupedRoute['jarakPerliter'] ?? 0;
+                                        
+                                        // Generate route string and total distance
+                                        $routeStr = 'G-';
+                                        $routeStr .= $smallestDistances[$truckName]['location'] . '-';
+                                        $totalDistance = $smallestDistances[$truckName]['distance'];
+                                        foreach ($routes as $route) {
+                                            $routeStr .= $route['to_location'] . '-';
+                                            $totalDistance += $route['distance'];
+                                        }
+                                        $routeStr .= 'G';
+                                        
+                                        // Hitung pemakaian BBM total dan total biaya
+                                        $fuelUsage = $totalDistance / $fuelUsedPerKm; // Total pemakaian BBM (Liter)
+                                        $fuelPricePerLiter = 6800; // Harga solar per liter dalam Rupiah
+                                        $totalCost = $fuelUsage * $fuelPricePerLiter; // Total biaya dalam Rupiah
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $truckName }}</td>
+                                        <td>{{ $routeStr }}</td>
+                                        <td>{{ number_format($totalDistance, 1) }} KM</td>
+                                        <td>{{ number_format($fuelUsage, 2) }} Liter</td>
+                                        <td> Rp. {{ number_format($fuelPricePerLiter, 0) }}</td>
+                                        <td> Rp. {{ number_format($totalCost, 0) }}</td>
+                                        <td>{{ $totalDemand }} (Box)</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    
                 </div>
             </div>
         </div>

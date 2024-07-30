@@ -268,17 +268,18 @@ class DataSetController extends Controller
                 }
             }
         }
+        // dd($groupedRoutes);
         // Return view with the necessary data
         return view('KepalaGudang.DataSet.saving', [
-            'distribusi' => $distribusi,
-            'savingsWithTotals' => $savingsWithTotals,
-            'customers' => $customers,
-            'totalOrders' => $totalOrders,
-            'groupedRoutes' => $groupedRoutes,
-            'nearestRoutes' => $nearestRoutes, // Pass nearest routes data
-            'smallestDistances' => $smallestDistances, // Pass smallest distances data
-            'remainingDistances' => $remainingDistances, // Pass remaining distances data
-            'title' => 'Perhitungan'
+            'distribusi'            => $distribusi,
+            'savingsWithTotals'     => $savingsWithTotals,
+            'customers'             => $customers,
+            'totalOrders'           => $totalOrders,
+            'groupedRoutes'         => $groupedRoutes,
+            'nearestRoutes'         => $nearestRoutes, // Pass nearest routes data
+            'smallestDistances'     => $smallestDistances, // Pass smallest distances data
+            'remainingDistances'    => $remainingDistances, // Pass remaining distances data
+            'title'                 => 'Perhitungan'
         ]);
     }
     
@@ -323,10 +324,11 @@ class DataSetController extends Controller
     
             if (!empty($routePoints)) {
                 $routes[] = [
-                    'truck_name' => $truck->name,
-                    'truck_capacity' => $truck->kapasitas,
-                    'points' => $routePoints,
-                    'total_demand' => $truck->kapasitas - $remainingCapacity
+                    'truck_name'        => $truck->name,
+                    'truck_capacity'    => $truck->kapasitas,
+                    'jarakPerliter'     => $truck->jarakPerliter,
+                    'points'            => $routePoints,
+                    'total_demand'      => $truck->kapasitas - $remainingCapacity
                 ];
             }
         }
