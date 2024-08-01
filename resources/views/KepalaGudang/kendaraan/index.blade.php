@@ -20,6 +20,7 @@
                                     <th scope="col">Nama</th>
                                     <th scope="col">Kapasitas</th>
                                     <th scope="col">Jarak Tempuh (KM)/Liter</th>
+                                    <th scope="col">Status</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -30,6 +31,7 @@
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->kapasitas}} </td>
                                     <td>{{ $item->jarakPerliter}} </td>
+                                    <td>{{$item->status}} </td>
                                     <td>
                                         <a href="{{ route('kendaraan.edit', $item->id) }}"
                                             class="btn btn-primary btn-sm"><i

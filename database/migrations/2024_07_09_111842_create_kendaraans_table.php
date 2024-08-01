@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('kapasitas');
             $table->integer('jarakPerliter');
+            $table->enum('status', ['Non Available', 'Available'])->default('Available');
             $table->timestamps();
         });
     }

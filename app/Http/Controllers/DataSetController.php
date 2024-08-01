@@ -65,8 +65,9 @@ class DataSetController extends Controller
         }
     
         $distribusi = Distribusi::create([
-            'name' => $request->name,
-            'tanggal' => $request->tanggal,
+            'name'      => $request->name,
+            'tanggal'   => $request->tanggal,
+            'status'    => 'Waiting'
         ]);
     
         $distances = [];
@@ -298,7 +299,7 @@ class DataSetController extends Controller
     
     private function groupRoutes($savingsWithTotals, $totalOrders)
     {
-        $trucks = Kendaraan::all();
+        $trucks = Kendaraan::where('status', 'Available')->get();
         $routes = [];
         $visitedCustomers = [];
     

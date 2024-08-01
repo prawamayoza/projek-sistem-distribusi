@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->date('tanggal');
+            $table->enum('status',['Approve', 'Waiting'])->default('Waiting');
             $table->timestamps();
         });
     }

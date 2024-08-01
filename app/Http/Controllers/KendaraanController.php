@@ -38,17 +38,20 @@ class KendaraanController extends Controller
             'name'                      => 'required',
             'kapasitas'                 => 'required',
             'jarakPerliter'             => 'required',
+            'status'                    => 'required',
+
 
         ], [
             'name.required'                     => 'Nama Pelanggan Wajib Dipilih',
             'kapasitas.required'                => 'Kapasitas Wajib Diisi',
-            'jarakPerliter.required'            => 'Kapasitas Wajib Diisi',
+            'jarakPerliter.required'            => 'Jarak Tempuh Wajib Diisi',
         ]);
 
         Kendaraan::create([
             'name'              => $request->name,
             'kapasitas'         => $request->kapasitas,
             'jarakPerliter'     => $request->jarakPerliter,
+            'status'            => $request->status,
 
         ]);
         return redirect()->route('kendaraan.index')->with('success', 'Data Berhasil Ditambah');
@@ -84,17 +87,22 @@ class KendaraanController extends Controller
             'name'                      => 'required',
             'kapasitas'                 => 'required',
             'jarakPerliter'             => 'required',
+            'status'                    => 'required',
+
 
         ], [
             'name.required'                     => 'Nama Pelanggan Wajib Dipilih',
             'kapasitas.required'                => 'Kapasitas Wajib Diisi',
-            'jarakPerliter.required'            => 'Kapasitas Wajib Diisi',
+            'jarakPerliter.required'            => 'Jarak Tempuh Wajib Diisi',
+            'status.required'                   => 'Status Wajib Diisi',
         ]);
         $kendaraan   = Kendaraan::findOrFail($id);
         $data       = [
             'name'              => $request->name,
             'kapasitas'         => $request->kapasitas,
             'jarakPerliter'     => $request->jarakPerliter,
+            'status'            => $request->status,
+
         ];
         $kendaraan->update($data);
         return redirect()->route('kendaraan.index')->with('success', 'Data Berhasil Diperbarui');

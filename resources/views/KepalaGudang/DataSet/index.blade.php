@@ -20,6 +20,7 @@
                                     <th scope="col">#</th>
                                     <th scope="col">Nama</th>
                                     <th scope="col">Tanggal Distribusi</th>
+                                    <th scope="'col">Status</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -29,6 +30,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->tanggal}} </td>
+                                    <td>{{ $item->status}} </td>
                                     <td>
                                         <a href="{{ route('data-set.show', $item->id) }}"
                                             class="btn btn-info btn-sm"><i

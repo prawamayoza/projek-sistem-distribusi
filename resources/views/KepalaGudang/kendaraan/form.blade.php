@@ -35,7 +35,7 @@
                     {{ csrf_field() }}
 
                         <div class="input-group input-group-dynamic mb-4">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">Nama</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Nama Kendaraan</label>
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', @$kendaraan->name) }}" required autocomplete="name" autofocus placeholder="Nama kendaraan" aria-label="Nama" aria-describedby="basic-addon1">
 
@@ -48,10 +48,10 @@
                         </div>
 
                         <div class="input-group input-group-dynamic mb-4">
-                            <label for="kapasitas" class="col-md-4 col-form-label text-md-right">Kapasitas Mobil</label>
+                            <label for="kapasitas" class="col-md-4 col-form-label text-md-right">Kapasitas Muatan Mobil</label>
 
                             <div class="col-md-6">
-                                <input id="kapasitas" type="number" class="form-control @error('kapasitas') is-invalid @enderror" name="kapasitas" value="{{ old('kapasitas', @$kendaraan->kapasitas) }}" required autocomplete="kapasitas" placeholder="kapasitas" aria-label="kapasitas" aria-describedby="basic-addon1" min="1">
+                                <input id="kapasitas" type="number" class="form-control @error('kapasitas') is-invalid @enderror" name="kapasitas" value="{{ old('kapasitas', @$kendaraan->kapasitas) }}" required autocomplete="kapasitas" placeholder="Kapasitas Muatan Mobil" aria-label="kapasitas" aria-describedby="basic-addon1" min="1">
                                 @error('kapasitas')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -64,7 +64,7 @@
                             <label for="kapasitas" class="col-md-4 col-form-label text-md-right">Jarak Tempuh (KM)/Liter</label>
 
                             <div class="col-md-6">
-                                <input id="jarakPerliter" type="number" class="form-control @error('jarakPerliter') is-invalid @enderror" name="jarakPerliter" value="{{ old('jarakPerliter', @$kendaraan->jarakPerliter) }}" required autocomplete="jarakPerliter" placeholder="jarakPerliter" aria-label="jarakPerliter" aria-describedby="basic-addon1" min="1">
+                                <input id="jarakPerliter" type="number" class="form-control @error('jarakPerliter') is-invalid @enderror" name="jarakPerliter" value="{{ old('jarakPerliter', @$kendaraan->jarakPerliter) }}" required autocomplete="jarakPerliter" placeholder="Jarak Tempuh" aria-label="jarakPerliter" aria-describedby="basic-addon1" min="1">
                                 @error('jarakPerliter')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -72,6 +72,23 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="input-group input-group-dynamic mb-4">
+                            <label for="status" class="col-md-4 col-form-label text-md-right">Status</label>
+
+                            <div class="col-md-6">
+                                <select id="Status" class="form-control @error('Status') is-invalid @enderror" name="status" required>
+                                    <option value="" selected disabled>-- Pilih Status --</option>
+                                    <option value="Available">Available</option>
+                                    <option value="Non Available">Non Available</option>
+                                </select>
+                                @error('status')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
 
                                 <button type="submit" class="btn btn-warning" id="submitButton">
                                 {{ $aksi}} <i class="material-icons opacity-10">save</i>
