@@ -11,5 +11,15 @@ class Produk extends Model
     protected $guarded = [
         'id'
     ];
+
+    /**
+     * Get the pesanan that owns the Produk
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pesanan()
+    {
+        return $this->belongsTo(Pesanan::class);
+    }
     
 }

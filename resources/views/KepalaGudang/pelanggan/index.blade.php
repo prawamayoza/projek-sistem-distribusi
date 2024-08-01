@@ -7,14 +7,17 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Daftar Pelanggan </h4>
+                    @role('kepala gudang')
                     <div>
                         <a href="{{ route('pelanggan.create') }}" class="btn btn-success btn-sm"><i
                                 class="material-icons text-sm me-2">add</i>Tambah Data</a>       
                     </div>
+                    @endrole
                 </div>
 
                 <div class="card-body">
                     <div class="table-responsive text-nowrap">
+                        @role('kepala gudang')
                         <table id="mytable" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
@@ -42,6 +45,42 @@
                                                 class="material-icons text-sm me-2">delete</i> Hapus
                                         </button>   
                                     </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">Tidak ada pengguna ditemukan</td>
+                                </tr>
+                                @endforelse 
+                            </tbody>
+                        </table>
+                        @endrole
+                        <table id="mytable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nama</th>
+                                    <th scope="col">Alamat</th>
+                                    <th scope="col">No telpon</th>
+                                    {{-- <th scope="col">Aksi</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 @forelse ($pelanggan as $item)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $item->alamat }}</td>
+                                    <td>{{ $item->no_telpon }}</td>
+                                    {{-- <td>
+                                        <a href="{{ route('pelanggan.edit', $item->id) }}"
+                                            class="btn btn-primary btn-sm"><i
+                                                class="material-icons text-sm me-2">edit</i> Edit</a>
+                                        <button value="{{ route('pelanggan.destroy', $item->id) }}"
+                                                            class="btn btn-sm btn-danger delete"
+                                                            data-toggle="tooltip" data-placement="top" title="Hapus"> <i
+                                                class="material-icons text-sm me-2">delete</i> Hapus
+                                        </button>   
+                                    </td> --}}
                                 </tr>
                                 @empty
                                 <tr>

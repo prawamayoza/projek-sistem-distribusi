@@ -69,7 +69,11 @@ class PesananController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $pesanan = Pesanan::with('produk')->findOrFail($id);
+        return view('KepalaGudang.pesanan.show',[
+            'pesanan'       => $pesanan,
+            'title'         => 'Detail Pesanan'
+        ]);
     }
 
     /**

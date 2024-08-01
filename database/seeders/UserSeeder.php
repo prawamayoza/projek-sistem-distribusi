@@ -19,5 +19,20 @@ class UserSeeder extends Seeder
             'password'  => bcrypt('password'),
         ]);
         $kepala_gudang->assignRole('kepala gudang');
+
+
+        $driver = User::create([
+            'name'          => 'Driver',
+            'email'     => 'driver@gmail.com',
+            'password'  => bcrypt('password'),
+        ]);
+        $driver->assignRole('driver');
+
+        $manager  = User::create([
+            'name'          => 'Manager',
+            'email'     => 'manager@gmail.com',
+            'password'  => bcrypt('password'),
+        ]);
+        $manager->assignRole('manager');
     }
 }

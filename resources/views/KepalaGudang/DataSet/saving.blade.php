@@ -23,7 +23,7 @@
                     <a class="nav-link" id="plan-tab" data-toggle="tab" href="#nearest" role="tab" aria-controls="nearest" aria-selected="false">Nearest Neighboar</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="plan-tab" data-toggle="tab" href="#jarak" role="tab" aria-controls="biaya" aria-selected="false">Jarak Biaya Transportasi</a>
+                    <a class="nav-link" id="plan-tab" data-toggle="tab" href="#jarak" role="tab" aria-controls="jarak" aria-selected="false">Jarak Biaya Transportasi</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -159,7 +159,7 @@
 
                     
                 </div>
-                <div class="tab-pane fade show active" id="jarak" role="tabpanel" aria-labelledby="jarak-tab">
+                <div class="tab-pane fade" id="jarak" role="tabpanel" aria-labelledby="plan-tab">
                     <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -211,6 +211,7 @@
                         </table>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>

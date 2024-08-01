@@ -17,6 +17,7 @@
             <span class="nav-link-text ms-1">Dashboard</span>
           </a>
         </li>
+        @role('kepala gudang')
         <li class="nav-item">
           <a class="nav-link text-white {{ request()->is('user*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('user.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -57,6 +58,26 @@
             <span class="nav-link-text ms-1">Kelola Data Perhitungan</span>
           </a>
         </li>
+        @endrole
+        @role('driver')
+        <li class="nav-item">
+          <a class="nav-link text-white {{ request()->is('pelanggan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('pelanggan.index')}}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">person</i>
+            </div>
+            <span class="nav-link-text ms-1">Kelola Pelanggan</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ request()->is('pesanan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('pesanan.index')}}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">shopping_basket</i>
+            </div>
+            <span class="nav-link-text ms-1">Kelola Pesanan Pelanggan</span>
+          </a>
+        </li>
+        @endrole
+        
       </ul>
     </div>
 

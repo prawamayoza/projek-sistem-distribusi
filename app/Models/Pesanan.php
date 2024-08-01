@@ -20,4 +20,14 @@ class Pesanan extends Model
     {
         return $this->belongsTo(Pelanggan::class);
     }
+
+    /**
+     * Get all of the produk for the Pesanan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function produk()
+    {
+        return $this->hasMany(Produk::class);
+    }
 }
