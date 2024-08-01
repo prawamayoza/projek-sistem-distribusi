@@ -114,11 +114,16 @@
                                 @foreach($nearestRoutes as $truckName => $routes)
                                 <tr>
                                     <td rowspan="{{ count($routes) }}">{{ $truckName }}</td>
+                                    @php
+                                        $minDistance = min(array_column($routes, 'distance'));
+                                    @endphp
                                     @foreach($routes as $index => $route)
                                         @if ($index > 0)
                                             <tr>
                                         @endif
-                                        <td>{{ $route['distance'] ?? 0 }} km - {{ $route['location'] }}</td>
+                                        <td @if($route['distance'] == $minDistance) style="font-weight:bold;" @endif>
+                                            {{ $route['distance'] ?? 0 }} km - {{ $route['location'] }}
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tr>
@@ -156,9 +161,8 @@
                             </tbody>
                         </table>
                     </div>
-
-                    
                 </div>
+                
                 <div class="tab-pane fade" id="jarak" role="tabpanel" aria-labelledby="plan-tab">
                     <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
                     <div class="table-responsive">
