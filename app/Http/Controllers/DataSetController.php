@@ -51,12 +51,24 @@ class DataSetController extends Controller
             'customer_to_warehouse.*' => 'required|exists:pelanggans,id',
             'warehouse_distance.*' => 'required|numeric',
         ]);
-
+    
+        // Custom validation to check for duplicate `from_customer` and `to_customer` pairs
+        $fromCustomers = $request->input('from_customer');
+        $toCustomers = $request->input('to_customer');
+        $uniquePairs = [];
+        foreach ($fromCustomers as $index => $fromCustomer) {
+            $pair = $fromCustomer . '-' . $toCustomers[$index];
+            if (in_array($pair, $uniquePairs)) {
+                return back()->withErrors(['duplicate_pair' => 'Duplicate pair of "From Customer" and "To Customer" detected.']);
+            }
+            $uniquePairs[] = $pair;
+        }
+    
         $distribusi = Distribusi::create([
             'name' => $request->name,
             'tanggal' => $request->tanggal,
         ]);
-
+    
         $distances = [];
         for ($i = 0; $i < count($request->from_customer); $i++) {
             $distances[] = [
@@ -66,11 +78,11 @@ class DataSetController extends Controller
                 'distance' => $request->distance[$i],
             ];
         }
-
+    
         foreach ($distances as $distance) {
             JarakPelanggan::create($distance);
         }
-
+    
         $warehouseDistances = [];
         for ($i = 0; $i < count($request->customer_to_warehouse); $i++) {
             $warehouseDistances[] = [
@@ -79,15 +91,16 @@ class DataSetController extends Controller
                 'distance' => $request->warehouse_distance[$i],
             ];
         }
-
+    
         foreach ($warehouseDistances as $warehouseDistance) {
             JarakGudang::create($warehouseDistance);
         }
-
+    
         $this->calculateSavings($distribusi->id);
-
+    
         return redirect()->route('data-set.index')->with('success', 'Data saved successfully.');
     }
+    
 
     public function calculateSavings($distribusiId)
     {
