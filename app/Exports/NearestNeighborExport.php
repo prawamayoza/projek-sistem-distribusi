@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Exports;
 
 use App\Models\Distribusi;
@@ -9,12 +8,11 @@ use App\Models\Kendaraan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\Saving;
-use Maatwebsite\Excel\Concerns\FromArray;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithTitle;
+use Illuminate\Contracts\View\View;
 
-class NearestNeighborExport implements FromArray, WithHeadings, ShouldAutoSize, WithTitle
+class NearestNeighborExport implements FromView, ShouldAutoSize
 {
     protected $distribusi;
 
@@ -23,8 +21,9 @@ class NearestNeighborExport implements FromArray, WithHeadings, ShouldAutoSize, 
         $this->distribusi = $distribusi;
     }
 
-    public function array(): array
+    public function view(): View
     {
+        // Retrieve the necessary data
         $distribusi = $this->distribusi;
         $savings = Saving::where('distribusi_id', $distribusi->id)->get();
         $customerIds = $savings->pluck('from_customer')->merge($savings->pluck('to_customer'))->unique();
@@ -56,40 +55,92 @@ class NearestNeighborExport implements FromArray, WithHeadings, ShouldAutoSize, 
 
         $groupedRoutes = $this->groupRoutes($savingsWithTotals, $totalOrders);
         $jarakGudang = JarakGudang::where('distribusi_id', $distribusi->id)->get();
-        $exportData = [];
-
+        $nearestRoutes = [];
         foreach ($groupedRoutes as $route) {
             $truckName = $route['truck_name'];
             foreach ($route['points'] as $point) {
                 $fromCustomer = Pelanggan::where('name', $point['location'])->first();
                 if ($fromCustomer) {
                     $distance = $jarakGudang->firstWhere('from_customer', $fromCustomer->id);
-                    $exportData[] = [
-                        'Truck Name' => $truckName,
-                        'Location' => $point['location'],
-                        'Distance' => $distance ? $distance->distance : 0,
-                        'Demand' => $point['demand']
+                    $nearestRoutes[$truckName][] = [
+                        'location' => $point['location'],
+                        'distance' => $distance ? $distance->distance : 0
                     ];
                 }
             }
         }
 
-        return $exportData;
-    }
+        $smallestDistances = [];
+        foreach ($nearestRoutes as $truckName => $points) {
+            $minDistance = null;
+            $minLocation = null;
+            foreach ($points as $point) {
+                if (is_null($minDistance) || $point['distance'] < $minDistance) {
+                    $minDistance = $point['distance'];
+                    $minLocation = $point['location'];
+                }
+            }
+            $smallestDistances[$truckName] = [
+                'location' => $minLocation,
+                'distance' => $minDistance
+            ];
+        }
 
-    public function headings(): array
-    {
-        return [
-            'Truck Name',
-            'Location',
-            'Distance',
-            'Demand'
-        ];
-    }
+        $remainingDistances = [];
+        foreach ($nearestRoutes as $truckName => $points) {
+            $visitedLocations = collect([$smallestDistances[$truckName]['location']]);
+            $currentLocation = $smallestDistances[$truckName]['location'];
 
-    public function title(): string
-    {
-        return "Biaya Transportasi Metode Nearest Neighbors";
+            while ($visitedLocations->count() < count($points)) {
+                $minDistance = null;
+                $nextLocation = null;
+
+                foreach ($points as $point) {
+                    if (!$visitedLocations->contains($point['location'])) {
+                        $fromCustomer = Pelanggan::where('name', $currentLocation)->first();
+                        $toCustomer = Pelanggan::where('name', $point['location'])->first();
+
+                        if ($fromCustomer && $toCustomer) {
+                            $distanceRecord = JarakPelanggan::where('from_customer', $fromCustomer->id)
+                                ->where('to_customer', $toCustomer->id)
+                                ->first();
+
+                            if (!$distanceRecord) {
+                                $distanceRecord = JarakPelanggan::where('from_customer', $toCustomer->id)
+                                    ->where('to_customer', $fromCustomer->id)
+                                    ->first();
+                            }
+
+                            $distanceValue = $distanceRecord ? $distanceRecord->distance : 0;
+
+                            if (is_null($minDistance) || $distanceValue < $minDistance) {
+                                $minDistance = $distanceValue;
+                                $nextLocation = $point['location'];
+                            }
+                        }
+                    }
+                }
+
+                if ($nextLocation) {
+                    $remainingDistances[$truckName][] = [
+                        'from_location' => $currentLocation,
+                        'to_location' => $nextLocation,
+                        'distance' => $minDistance
+                    ];
+                    $visitedLocations->push($nextLocation);
+                    $currentLocation = $nextLocation;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return view('KepalaGudang.DataSet.exports', [
+            'distribusi' => $distribusi,
+            'groupedRoutes' => $groupedRoutes,
+            'remainingDistances' => $remainingDistances,
+            'smallestDistances' => $smallestDistances,
+        ]);
     }
 
     private function groupRoutes($savingsWithTotals, $totalOrders)

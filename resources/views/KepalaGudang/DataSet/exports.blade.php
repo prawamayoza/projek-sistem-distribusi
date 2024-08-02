@@ -5,7 +5,7 @@
     <title>Biaya Transportasi</title>
 </head>
 <body>
-    <h2>Distribusi: {{ $distribusi->id }}</h2>
+    <h2>{{ $distribusi->name }}</h2>
     <p>Tanggal Distribusi: {{ \Carbon\Carbon::parse($distribusi->tanggal)->format('Y-m-d') }}</p>
     
     <table border="1">

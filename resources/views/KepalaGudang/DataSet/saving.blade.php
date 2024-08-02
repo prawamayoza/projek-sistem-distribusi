@@ -164,11 +164,12 @@
                 </div>
                 
                 <div class="tab-pane fade" id="jarak" role="tabpanel" aria-labelledby="plan-tab">
-                    <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
-                    <!-- Tambahkan tombol ekspor -->
-                    <a href="{{ route('export.nearest.neighbors', ['id' => $distribusi->id]) }}" class="btn btn-success btn-sm">
-                        <i class="material-icons text-sm me-2">import_export</i>Export Data
-                    </a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
+                        <a href="{{ route('export.nearest.neighbors', ['id' => $distribusi->id]) }}" class="btn btn-success btn-sm">
+                            <i class="material-icons text-sm me-2">import_export</i>Export Data
+                        </a>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
