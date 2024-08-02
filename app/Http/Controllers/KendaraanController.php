@@ -19,6 +19,19 @@ class KendaraanController extends Controller
         ]);
     }
 
+    //ubah status button
+    // KendaraanController.php
+
+    public function changeStatus(Request $request, $id)
+    {
+        $kendaraan = Kendaraan::findOrFail($id);
+        $kendaraan->status = $request->status === 'Available' ? 'Available' : 'Non Available';
+        $kendaraan->save();
+    
+        return response()->json(['success' => true]);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

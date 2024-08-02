@@ -12,7 +12,7 @@
                         <a href="{{ route('pesanan.create') }}" class="btn btn-success btn-sm"><i
                                 class="material-icons text-sm me-2">add</i>Tambah Data</a>
                         <a href="{{ route('pesanan.export') }}" class="btn btn-success btn-sm"><i
-                                class="material-icons text-sm me-2">picture_as_pdf</i>Export Data</a>        
+                                class="material-icons text-sm me-2">import_export</i>Export Data</a>        
                     </div>
                     @endrole
                 </div>

@@ -25,18 +25,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                 @forelse ($kendaraan as $item)
+                                @forelse ($kendaraan as $item)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">{{ $item->name }}</td>
-                                    <td class="text-center">{{ $item->kapasitas}} </td>
-                                    <td class="text-center">{{ $item->jarakPerliter}} </td>
+                                    <td class="text-center">{{ $item->kapasitas }} </td>
+                                    <td class="text-center">{{ $item->jarakPerliter }} </td>
                                     <td class="text-center">
-                                        @if($item->status === 'Available')
-                                            <span class="badge bg-gradient-success">{{$item->status}}</span>
-                                        @else
-                                            <span class="badge bg-gradient-danger">{{$item->status}}</span>
-                                        @endif
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input toggle-status" type="checkbox"
+                                                   data-id="{{ $item->id }}"
+                                                   id="statusSwitch{{ $item->id }}"
+                                                   {{ $item->status === 'Available' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ $item->status === 'Available' ? 'text-success' : 'text-danger' }}"
+                                                   for="statusSwitch{{ $item->id }}">{{ $item->status }}</label>
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <a href="{{ route('kendaraan.edit', $item->id) }}"
@@ -51,7 +54,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">Tidak ada data ditemukan</td>
+                                    <td colspan="6" class="text-center">Tidak ada data ditemukan</td>
                                 </tr>
                                 @endforelse 
                             </tbody>
@@ -62,4 +65,41 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleStatusButtons = document.querySelectorAll('.toggle-status');
+
+        toggleStatusButtons.forEach(button => {
+            button.addEventListener('change', function () {
+                const kendaraanId = this.getAttribute('data-id');
+                const isChecked = this.checked;
+                
+                fetch(`/kendaraan/${kendaraanId}/changeStatus`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ status: isChecked ? 'Available' : 'Unavailable' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const label = this.nextElementSibling;
+                        label.textContent = isChecked ? 'Available' : 'Unavailable';
+                        label.classList.toggle('text-success', isChecked);
+                        label.classList.toggle('text-danger', !isChecked);
+                    } else {
+                        this.checked = !isChecked; // Revert the toggle switch if the request failed
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.checked = !isChecked; // Revert the toggle switch if there is an error
+                });
+            });
+        });
+    });
+</script>
 @endsection
