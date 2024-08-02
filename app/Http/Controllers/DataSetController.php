@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\NearestNeighborExport;
 use App\Models\Distribusi;
 use App\Models\JarakGudang;
 use App\Models\JarakPelanggan;
@@ -10,9 +11,18 @@ use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\Saving;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DataSetController extends Controller
 {
+    protected $data;
+
+    public function __construct()
+    {
+        // Initialize $data or fetch it from the database
+        $this->data = []; // Replace with actual data fetching logic
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -150,6 +160,7 @@ class DataSetController extends Controller
             }
         });
     }
+    //halaman perhitungan
     public function perhitungan($distribusiId)
     {
         // Retrieve the Distribusi record
@@ -296,7 +307,40 @@ class DataSetController extends Controller
             'title'                 => 'Perhitungan'
         ]);
     }
+    // public function exportNearestNeighbors($id)
+    // {
+    //     $distribusi = Distribusi::find($id);
+    //     // Convert the tanggal to a Carbon instance if it's not already one
+    //     $distribusiDate = \Carbon\Carbon::parse($distribusi->tanggal)->format('Y-m-d');
+    //     $title = "Biaya Transportasi $distribusiDate"; // Use double quotes for variable interpolation
+        
+    //     // Ensure the title does not exceed 31 characters
+    //     if (strlen($title) > 31) {
+    //         $title = substr($title, 0, 28) . '...'; // Truncate and add ellipsis
+    //     }
     
+    //     return Excel::download(new NearestNeighborExport($this->data, $title), "$title.xlsx");
+    // }
+    public function exportNearestNeighbors($id)
+    {
+        $distribusi = Distribusi::find($id);
+    
+        if ($distribusi) {
+            $distribusiDate = \Carbon\Carbon::parse($distribusi->tanggal)->format('Y-m-d');
+            $title = "Biaya Transportasi $distribusiDate";
+            // Ensure title length does not exceed 31 characters
+            $title = substr($title, 0, 31);
+    
+            return Excel::download(new NearestNeighborExport($distribusi), "{$title}.xlsx");
+        }
+    
+        return redirect()->back()->withErrors('Distribusi not found');
+    }
+    
+    
+    
+
+
     private function groupRoutes($savingsWithTotals, $totalOrders)
     {
         $trucks = Kendaraan::where('status', 'Available')->get();

@@ -165,6 +165,10 @@
                 
                 <div class="tab-pane fade" id="jarak" role="tabpanel" aria-labelledby="plan-tab">
                     <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
+                    <!-- Tambahkan tombol ekspor -->
+                    <a href="{{ route('export.nearest.neighbors', ['id' => $distribusi->id]) }}" class="btn btn-success btn-sm">
+                        <i class="material-icons text-sm me-2">import_export</i>Export Data
+                    </a>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -185,7 +189,7 @@
                                         $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
                                         $totalDemand = $groupedRoute['total_demand'] ?? '-';
                                         $fuelUsedPerKm = $groupedRoute['jarakPerliter'] ?? 0;
-                                        
+                
                                         // Generate route string and total distance
                                         $routeStr = 'G-';
                                         $routeStr .= $smallestDistances[$truckName]['location'] . '-';
@@ -195,7 +199,7 @@
                                             $totalDistance += $route['distance'];
                                         }
                                         $routeStr .= 'G';
-                                        
+                
                                         // Hitung pemakaian BBM total dan total biaya
                                         $fuelUsage = $totalDistance / $fuelUsedPerKm; // Total pemakaian BBM (Liter)
                                         $fuelPricePerLiter = 6800; // Harga solar per liter dalam Rupiah
@@ -215,6 +219,7 @@
                         </table>
                     </div>
                 </div>
+                
                 
             </div>
         </div>
