@@ -16,27 +16,27 @@
                         <table id="mytable" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Role</th>
-                                    <th scope="col">Aksi</th>
+                                    <th scope="col" class="text-center">Nomor</th>
+                                    <th scope="col" class="text-center">Nama</th>
+                                    <th scope="col" class="text-center">Email</th>
+                                    <th scope="col" class="text-center">Role</th>
+                                    <th scope="col" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($user as $item)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->name }}</td>
-                                    <td>{{ $item->email }}</td>
-                                    <td>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td class="text-center">{{ $item->name }}</td>
+                                    <td class="text-center">{{ $item->email }}</td>
+                                    <td class="text-center">
                                         @foreach($item->getRoleNames() as $role)
-                                        <div class="badge bg-warning">{{ $role }}</div>
+                                        <div class="badge bg-info">{{ $role }}</div>
                                         @endforeach
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <a href="{{ route('user.edit', $item->id) }}"
-                                            class="btn btn-primary btn-sm"><i
+                                            class="btn btn-warning btn-sm"><i
                                                 class="material-icons text-sm me-2">edit</i> Edit</a>
                                         <button value="{{ route('user.destroy', $item->id) }}"
                                                             class="btn btn-sm btn-danger delete"

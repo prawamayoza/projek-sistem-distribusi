@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('home*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('home')}}">
+          <a class="nav-link text-white {{ request()->is('home*') ? 'active  bg-gradient-info' : '' }}" href="{{route('home')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">dashboard</i>
             </div>
@@ -19,7 +19,7 @@
         </li>
         @role('kepala gudang')
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('user*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('user.index')}}">
+          <a class="nav-link text-white {{ request()->is('user*') ? 'active  bg-gradient-info' : '' }}" href="{{route('user.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">person</i>
             </div>
@@ -27,7 +27,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('pelanggan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('pelanggan.index')}}">
+          <a class="nav-link text-white {{ request()->is('pelanggan*') ? 'active  bg-gradient-info' : '' }}" href="{{route('pelanggan.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">person</i>
             </div>
@@ -35,7 +35,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('pesanan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('pesanan.index')}}">
+          <a class="nav-link text-white {{ request()->is('pesanan*') ? 'active  bg-gradient-info' : '' }}" href="{{route('pesanan.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">shopping_basket</i>
             </div>
@@ -43,7 +43,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('kendaraan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('kendaraan.index')}}">
+          <a class="nav-link text-white {{ request()->is('kendaraan*') ? 'active  bg-gradient-info' : '' }}" href="{{route('kendaraan.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">directions_car</i>
             </div>
@@ -51,7 +51,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('data-set*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('data-set.index')}}">
+          <a class="nav-link text-white {{ request()->is('data-set*') ? 'active  bg-gradient-info' : '' }}" href="{{route('data-set.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">dataset</i>
             </div>
@@ -61,7 +61,7 @@
         @endrole
         @role('driver')
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('pelanggan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('pelanggan.index')}}">
+          <a class="nav-link text-white {{ request()->is('pelanggan*') ? 'active  bg-gradient-info' : '' }}" href="{{route('pelanggan.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">person</i>
             </div>
@@ -69,7 +69,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ request()->is('pesanan*') ? 'active  bg-gradient-warning' : '' }}" href="{{route('pesanan.index')}}">
+          <a class="nav-link text-white {{ request()->is('pesanan*') ? 'active  bg-gradient-info' : '' }}" href="{{route('pesanan.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">shopping_basket</i>
             </div>
