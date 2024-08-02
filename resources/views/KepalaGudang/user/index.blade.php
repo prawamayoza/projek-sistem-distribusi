@@ -7,8 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Daftar User </h4>
+                    @role('kepala gudang')
                     <a href="{{ route('user.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                    @endrole
                 </div>
 
                 <div class="card-body">
@@ -20,7 +22,9 @@
                                     <th scope="col" class="text-center">Nama</th>
                                     <th scope="col" class="text-center">Email</th>
                                     <th scope="col" class="text-center">Role</th>
+                                    @role('kepala gudang')
                                     <th scope="col" class="text-center">Aksi</th>
+                                    @endrole
                                 </tr>
                             </thead>
                             <tbody>
@@ -34,6 +38,7 @@
                                         <div class="badge bg-info">{{ $role }}</div>
                                         @endforeach
                                     </td>
+                                    @role('kepala gudang')
                                     <td class="text-center">
                                         <a href="{{ route('user.edit', $item->id) }}"
                                             class="btn btn-warning btn-sm"><i
@@ -44,6 +49,7 @@
                                                 class="material-icons text-sm me-2">delete</i> Hapus
                                         </button>   
                                     </td>
+                                    @endrole
                                 </tr>
                                 @empty
                                 <tr>

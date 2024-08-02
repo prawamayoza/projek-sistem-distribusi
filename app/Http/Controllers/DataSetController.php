@@ -28,7 +28,17 @@ class DataSetController extends Controller
      */
     public function index()
     {
-        $distribusi =   Distribusi::orderByDesc('created_at')->get();
+        $user = auth()->user();
+    
+        // Ambil data berdasarkan peran pengguna
+        if ($user->hasRole('driver')) {
+            // Hanya tampilkan data dengan status 'Approve' untuk driver
+            $distribusi = Distribusi::where('status', 'Approve')->orderByDesc('created_at')->get();
+        } else {
+            // Tampilkan semua data untuk kepala gudang dan manager
+            $distribusi =   Distribusi::orderByDesc('created_at')->get();
+
+        }
         return view('KepalaGudang.DataSet.index',[
             'distribusi'    =>$distribusi,
             'title'         =>'Kelola Data Set'
@@ -46,7 +56,24 @@ class DataSetController extends Controller
             'title'         => 'Tambahkan Data Set'
         ]);
     }
+    //update status
+    public function updateStatus(Request $request, $id)
+    {
+        $distribusi = Distribusi::find($id);
+        if (!$distribusi) {
+            return redirect()->back()->with('error', 'Distribusi not found.');
+        }
+        
+        // Validate and update the status
+        $validated = $request->validate([
+            'status' => 'required|string|in:Approve,Waiting', // Adjust validation as needed
+        ]);
 
+        $distribusi->status = $validated['status'];
+        $distribusi->save();
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
+    }
     /**
      * Store a newly created resource in storage.
      */

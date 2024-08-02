@@ -35,5 +35,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('export-pesanan', function () {
     return Excel::download(new PesananExport, 'pesanan.xlsx');
 })->name('pesanan.export');
+Route::post('/data-set/{id}/update-status', [DataSetController::class, 'updateStatus'])->name('data-set.update-status');
 Route::patch('/kendaraan/{id}/changeStatus', [KendaraanController::class, 'changeStatus'])->name('kendaraan.changeStatus');
 Route::get('export-nearest-neighbors/{id}', [DataSetController::class, 'exportNearestNeighbors'])->name('export.nearest.neighbors');

@@ -7,9 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Daftar Data Perhitungan Distribusi </h4>
-
+                    @role('kepala gudang')
                     <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                    @endrole
                 </div>
 
                 <div class="card-body">
@@ -38,11 +39,21 @@
                                     @endif
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('data-set.show', $item->id) }}"
-                                            class="btn btn-info btn-sm"><i
-                                                class="material-icons text-sm me-2">remove_red_eye</i>Detail </a>
                                         <a href="{{ route('saving_matrix.show', $item->id) }}"
                                             class="btn btn-info btn-sm"><i class="material-icons text-sm me-2">calculate</i> Perhitungan</a>        
+                                        @role('manager')
+                                        <form action="{{ route('data-set.update-status', $item->id) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="status" value="{{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}">
+                                            <button type="submit" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Update Status">
+                                                <i class="material-icons text-sm me-2">update</i> {{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}
+                                            </button>
+                                        </form>
+                                        @endrole
+                                        @role('kepala gudang')
+                                            <a href="{{ route('data-set.show', $item->id) }}"
+                                                class="btn btn-info btn-sm"><i
+                                            class="material-icons text-sm me-2">remove_red_eye</i>Detail </a>
                                         <a href="{{ route('data-set.edit', $item->id) }}"
                                             class="btn btn-warning btn-sm"><i
                                                 class="material-icons text-sm me-2">edit</i> Edit</a>
@@ -50,7 +61,8 @@
                                                             class="btn btn-sm btn-danger delete"
                                                             data-toggle="tooltip" data-placement="top" title="Hapus"> <i
                                                 class="material-icons text-sm me-2">delete</i> Hapus
-                                        </button>   
+                                        </button>
+                                        @endrole   
                                     </td>
                                 </tr>
                                 @empty

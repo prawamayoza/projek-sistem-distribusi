@@ -13,6 +13,7 @@
         </div>
         <div class="card-body">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
+                @role(['kepala gudang', 'manager'])
                 <li class="nav-item" role="presentation">
                     <a class="nav-link active" id="saving-matrix-tab" data-toggle="tab" href="#saving-matrix" role="tab" aria-controls="saving-matrix" aria-selected="true">Saving Matrix</a>
                 </li>
@@ -22,12 +23,14 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="plan-tab" data-toggle="tab" href="#nearest" role="tab" aria-controls="nearest" aria-selected="false">Nearest Neighboar</a>
                 </li>
+                @endrole
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="plan-tab" data-toggle="tab" href="#jarak" role="tab" aria-controls="jarak" aria-selected="false">Jarak Biaya Transportasi</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <!-- Saving Matrix Tab -->
+                @role(['kepala gudang', 'manager'])
                 <div class="tab-pane fade show active" id="saving-matrix" role="tabpanel" aria-labelledby="saving-matrix-tab">
                     <h5>Saving Matrix</h5>
                     <div class="table-responsive">
@@ -162,13 +165,15 @@
                         </table>
                     </div>
                 </div>
-                
+                @endrole
                 <div class="tab-pane fade" id="jarak" role="tabpanel" aria-labelledby="plan-tab">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>Biaya Transportasi Metode Nearest Neighbors</h5>
+                        @role(['kepala gudang', 'manager'])
                         <a href="{{ route('export.nearest.neighbors', ['id' => $distribusi->id]) }}" class="btn btn-success btn-sm">
                             <i class="material-icons text-sm me-2">import_export</i>Export Data
                         </a>
+                        @endrole
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">

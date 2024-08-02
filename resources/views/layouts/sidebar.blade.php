@@ -17,7 +17,7 @@
             <span class="nav-link-text ms-1">Dashboard</span>
           </a>
         </li>
-        @role('kepala gudang')
+        @role(['kepala gudang', 'manager'])
         <li class="nav-item">
           <a class="nav-link text-white {{ request()->is('user*') ? 'active  bg-gradient-info' : '' }}" href="{{route('user.index')}}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -74,6 +74,14 @@
               <i class="material-icons opacity-10">shopping_basket</i>
             </div>
             <span class="nav-link-text ms-1">Kelola Pesanan Pelanggan</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ request()->is('data-set*') ? 'active  bg-gradient-info' : '' }}" href="{{route('data-set.index')}}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">dataset</i>
+            </div>
+            <span class="nav-link-text ms-1">Kelola Data Perhitungan</span>
           </a>
         </li>
         @endrole

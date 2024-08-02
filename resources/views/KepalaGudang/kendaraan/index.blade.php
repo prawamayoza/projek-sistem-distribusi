@@ -7,8 +7,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Daftar Kendaraan </h4>
+                    @role('kepala gudang')
                     <a href="{{ route('kendaraan.create') }}" class="btn btn-success btn-sm"><i
                             class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                    @endrole
                 </div>
 
                 <div class="card-body">
@@ -21,7 +23,9 @@
                                     <th scope="col" class="text-center">Kapasitas</th>
                                     <th scope="col" class="text-center">Jarak Tempuh (KM)/Liter</th>
                                     <th scope="col" class="text-center">Status</th>
+                                    @role('kepala gudang')
                                     <th scope="col" class="text-center">Aksi</th>
+                                    @endrole
                                 </tr>
                             </thead>
                             <tbody>
@@ -41,6 +45,7 @@
                                                    for="statusSwitch{{ $item->id }}">{{ $item->status }}</label>
                                         </div>
                                     </td>
+                                    @role('kepala gudang')
                                     <td class="text-center">
                                         <a href="{{ route('kendaraan.edit', $item->id) }}"
                                             class="btn btn-warning btn-sm"><i
@@ -51,6 +56,7 @@
                                                 class="material-icons text-sm me-2">delete</i> Hapus
                                         </button>   
                                     </td>
+                                    @endrole
                                 </tr>
                                 @empty
                                 <tr>
