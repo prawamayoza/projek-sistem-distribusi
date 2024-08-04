@@ -49,6 +49,9 @@
                                                 <i class="material-icons text-sm me-2">update</i> {{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}
                                             </button>
                                         </form>
+                                        <a href="{{ route('data-set.show', $item->id) }}"
+                                            class="btn btn-info btn-sm"><i
+                                        class="material-icons text-sm me-2">remove_red_eye</i>Detail </a>
                                         @endrole
                                         @role('kepala gudang')
                                             <a href="{{ route('data-set.show', $item->id) }}"

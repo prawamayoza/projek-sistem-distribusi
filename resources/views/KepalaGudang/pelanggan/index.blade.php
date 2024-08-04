@@ -54,6 +54,7 @@
                                 </tbody>
                             </table>
                         @endrole
+                        @role(['manager', 'driver'])
                         <table id="mytable" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
@@ -89,6 +90,7 @@
                                 @endforelse 
                             </tbody>
                         </table>
+                        @endrole
                     </div>
                 </div>
             </div>
