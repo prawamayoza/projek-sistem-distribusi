@@ -6,10 +6,11 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Daftar Data Perhitungan Distribusi </h4>
+                    <h4 class="mb-0">Daftar Data Perhitungan Distribusi</h4>
                     @role('kepala gudang')
-                    <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm"><i
-                            class="material-icons text-sm me-2">add</i>Tambah Data</a>
+                    <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm">
+                        <i class="material-icons text-sm me-2">add</i>Tambah Data
+                    </a>
                     @endrole
                 </div>
 
@@ -26,53 +27,54 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                 @forelse ($distribusi as $item)
+                                @forelse ($distribusi as $item)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">{{ $item->name }}</td>
-                                    <td class="text-center">{{ $item->tanggal}} </td>
+                                    <td class="text-center">{{ $item->tanggal }}</td>
                                     <td class="text-center">
                                         @if($item->status === 'Approve')
-                                        <span class="badge bg-gradient-success">{{$item->status}}</span>
-                                    @else
-                                        <span class="badge bg-gradient-danger">{{$item->status}}</span>
-                                    @endif
+                                            <span class="badge bg-gradient-success">{{ $item->status }}</span>
+                                        @else
+                                            <span class="badge bg-gradient-danger">{{ $item->status }}</span>
+                                        @endif
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('saving_matrix.show', $item->id) }}"
-                                            class="btn btn-info btn-sm"><i class="material-icons text-sm me-2">calculate</i> Perhitungan</a>        
+                                        <a href="{{ route('saving_matrix.show', $item->id) }}" class="btn btn-info btn-sm">
+                                            <i class="material-icons text-sm me-2">calculate</i> Perhitungan
+                                        </a>
                                         @role('manager')
-                                        <form action="{{ route('data-set.update-status', $item->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="status" value="{{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}">
-                                            <button type="submit" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Update Status">
-                                                <i class="material-icons text-sm me-2">update</i> {{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}
-                                            </button>
-                                        </form>
-                                        <a href="{{ route('data-set.show', $item->id) }}"
-                                            class="btn btn-info btn-sm"><i
-                                        class="material-icons text-sm me-2">remove_red_eye</i>Detail </a>
+                                            @if($item->status !== 'Approve')
+                                            <form action="{{ route('data-set.update-status', $item->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                <input type="hidden" name="status" value="{{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}">
+                                                <button type="submit" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Update Status">
+                                                    <i class="material-icons text-sm me-2">update</i> {{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}
+                                                </button>
+                                            </form>
+                                            @endif
+                                            <a href="{{ route('data-set.show', $item->id) }}" class="btn btn-info btn-sm">
+                                                <i class="material-icons text-sm me-2">remove_red_eye</i>Detail
+                                            </a>
                                         @endrole
                                         @role('kepala gudang')
-                                            <a href="{{ route('data-set.show', $item->id) }}"
-                                                class="btn btn-info btn-sm"><i
-                                            class="material-icons text-sm me-2">remove_red_eye</i>Detail </a>
-                                        <a href="{{ route('data-set.edit', $item->id) }}"
-                                            class="btn btn-warning btn-sm"><i
-                                                class="material-icons text-sm me-2">edit</i> Edit</a>
-                                        <button value="{{ route('data-set.destroy', $item->id) }}"
-                                                            class="btn btn-sm btn-danger delete"
-                                                            data-toggle="tooltip" data-placement="top" title="Hapus"> <i
-                                                class="material-icons text-sm me-2">delete</i> Hapus
-                                        </button>
-                                        @endrole   
+                                            <a href="{{ route('data-set.show', $item->id) }}" class="btn btn-info btn-sm">
+                                                <i class="material-icons text-sm me-2">remove_red_eye</i>Detail
+                                            </a>
+                                            <a href="{{ route('data-set.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                                <i class="material-icons text-sm me-2">edit</i> Edit
+                                            </a>
+                                            <button value="{{ route('data-set.destroy', $item->id) }}" class="btn btn-sm btn-danger delete" data-toggle="tooltip" data-placement="top" title="Hapus">
+                                                <i class="material-icons text-sm me-2">delete</i> Hapus
+                                            </button>
+                                        @endrole
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
                                     <td colspan="5" class="text-center">Tidak ada data ditemukan</td>
                                 </tr>
-                                @endforelse 
+                                @endforelse
                             </tbody> 
                         </table>
                     </div>
