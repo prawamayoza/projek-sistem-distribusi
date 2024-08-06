@@ -189,34 +189,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($groupedRoutes as $route)
-                                    @php
-                                        $truckName = $route['truck_name'];
-                                        $totalDemand = $route['total_demand'];
-                                        $fuelUsedPerKm = $route['jarakPerliter'];
-                
-                                        $routeStr = 'G-';
-                                        $totalDistance = 0;
-                                        foreach ($route['points'] as $point) {
-                                            $routeStr .= $point['location'] . '-';
-                                            $totalDistance += $point['distance'];
-                                        }
-                                        $routeStr .= 'G';
-                
-                                        $fuelUsage = $totalDistance / $fuelUsedPerKm;
-                                        $fuelPricePerLiter = 6800;
-                                        $totalCost = $fuelUsage * $fuelPricePerLiter;
-                                    @endphp
-                                    <tr>
-                                        <td>{{ $truckName }}</td>
-                                        <td>{{ $routeStr }}</td>
-                                        <td>{{ number_format($totalDistance, 1) }} KM</td>
-                                        <td>{{ number_format($fuelUsage, 2) }} Liter</td>
-                                        <td> Rp. {{ number_format($fuelPricePerLiter, 0) }}</td>
-                                        <td> Rp. {{ number_format($totalCost, 0) }}</td>
-                                        <td>{{ $totalDemand }} (Box)</td>
-                                    </tr>
-                                @endforeach
+                                @foreach($remainingDistances as $truckName => $routes)
+                                @php
+                                    // Find the corresponding data for the truck name in groupedRoutes
+                                    $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
+                                    $totalDemand = $groupedRoute['total_demand'] ?? '-';
+                                    $fuelUsedPerKm = $groupedRoute['jarakPerliter'] ?? 1; // Default value to avoid division by zero
+                            
+                                    // Generate route string and total distance
+                                    $routeStr = 'G-';
+                                    $routeStr .= $smallestDistances[$truckName]['location'] . '-';
+                                    $totalDistance = $smallestDistances[$truckName]['distance'];
+                            
+                                    foreach ($routes as $route) {
+                                        $routeStr .= $route['to_location'] . '-';
+                                        $totalDistance += $route['distance'];
+                                    }
+                                    $routeStr .= 'G';
+                            
+                                    // Calculate fuel usage and total cost
+                                    $fuelUsage = $totalDistance / $fuelUsedPerKm;
+                                    $fuelPricePerLiter = 6800;
+                                    $totalCost = $fuelUsage * $fuelPricePerLiter;
+                                @endphp
+                                <tr>
+                                    <td>{{ $truckName }}</td>
+                                    <td>{{ $routeStr }}</td>
+                                    <td>{{ number_format($totalDistance, 1) }} KM</td>
+                                    <td>{{ number_format($fuelUsage, 2) }} Liter</td>
+                                    <td>Rp. {{ number_format($fuelPricePerLiter, 0) }}</td>
+                                    <td>Rp. {{ number_format($totalCost, 0) }}</td>
+                                    <td>{{ $totalDemand }} (Box)</td>
+                                </tr>
+                            @endforeach
+                            
                             </tbody>
                         </table>
                     </div>
