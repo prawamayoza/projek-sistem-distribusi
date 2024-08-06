@@ -334,39 +334,6 @@ class DataSetController extends Controller
             'title'                 => 'Perhitungan'
         ]);
     }
-    // public function exportNearestNeighbors($id)
-    // {
-    //     $distribusi = Distribusi::find($id);
-    //     // Convert the tanggal to a Carbon instance if it's not already one
-    //     $distribusiDate = \Carbon\Carbon::parse($distribusi->tanggal)->format('Y-m-d');
-    //     $title = "Biaya Transportasi $distribusiDate"; // Use double quotes for variable interpolation
-        
-    //     // Ensure the title does not exceed 31 characters
-    //     if (strlen($title) > 31) {
-    //         $title = substr($title, 0, 28) . '...'; // Truncate and add ellipsis
-    //     }
-    
-    //     return Excel::download(new NearestNeighborExport($this->data, $title), "$title.xlsx");
-    // }
-    public function exportNearestNeighbors($id)
-    {
-        $distribusi = Distribusi::find($id);
-    
-        if ($distribusi) {
-            $distribusiDate = \Carbon\Carbon::parse($distribusi->tanggal)->format('Y-m-d');
-            $title = "Biaya Transportasi $distribusiDate";
-            // Ensure title length does not exceed 31 characters
-            $title = substr($title, 0, 31);
-    
-            return Excel::download(new NearestNeighborExport($distribusi), "{$title}.xlsx");
-        }
-    
-        return redirect()->back()->withErrors('Distribusi not found');
-    }
-    
-    
-    
-
 
     private function groupRoutes($savingsWithTotals, $totalOrders)
     {
@@ -418,6 +385,21 @@ class DataSetController extends Controller
             }
         }
         return $routes;
+    }
+    public function exportNearestNeighbors($id)
+    {
+        $distribusi = Distribusi::find($id);
+    
+        if ($distribusi) {
+            $distribusiDate = \Carbon\Carbon::parse($distribusi->tanggal)->format('Y-m-d');
+            $title = "Biaya Transportasi $distribusiDate";
+            // Ensure title length does not exceed 31 characters
+            $title = substr($title, 0, 31);
+    
+            return Excel::download(new NearestNeighborExport($distribusi), "{$title}.xlsx");
+        }
+    
+        return redirect()->back()->withErrors('Distribusi not found');
     }
     
     /**
