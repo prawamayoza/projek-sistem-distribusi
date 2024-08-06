@@ -334,16 +334,26 @@ class DataSetController extends Controller
             'title'                 => 'Perhitungan'
         ]);
     }
-
+    
     private function groupRoutes($savingsWithTotals, $totalOrders)
     {
         $trucks = Kendaraan::where('status', 'Available')->get();
         $routes = [];
         $visitedCustomers = [];
+        $truckIndex = 0;
+        $truckCount = count($trucks);
     
         foreach ($trucks as $truck) {
             $remainingCapacity = $truck->kapasitas;
             $routePoints = [];
+            $currentTruckName = $truck->name;
+            $currentRoute = [
+                'truck_name' => $currentTruckName,
+                'truck_capacity' => $truck->kapasitas,
+                'jarakPerliter' => $truck->jarakPerliter,
+                'points' => [],
+                'total_demand' => 0
+            ];
     
             // Flatten the savings array and sort by savings in descending order
             $sortedSavings = collect($savingsWithTotals)->flatMap(function ($toCustomers, $fromCustomer) {
@@ -363,29 +373,55 @@ class DataSetController extends Controller
                 $totalDemand = $totalOrders[$fromCustomer] ?? 0;
     
                 // Check if customer has already been visited and if the demand fits the truck capacity
-                if (!in_array($fromCustomer, $visitedCustomers) && $totalDemand > 0 && $totalDemand <= $remainingCapacity) {
-                    $routePoints[] = [
-                        'distance' => $saving['savings'],
-                        'location' => Pelanggan::find($fromCustomer)->name,
-                        'demand' => $totalDemand
-                    ];
-                    $remainingCapacity -= $totalDemand;
-                    $visitedCustomers[] = $fromCustomer; // Mark customer as visited
+                if (!in_array($fromCustomer, $visitedCustomers) && $totalDemand > 0) {
+                    while ($totalDemand > 0) {
+                        if ($totalDemand <= $remainingCapacity) {
+                            $routePoints[] = [
+                                'distance' => $saving['savings'],
+                                'location' => Pelanggan::find($fromCustomer)->name,
+                                'demand' => $totalDemand
+                            ];
+                            $remainingCapacity -= $totalDemand;
+                            $currentRoute['points'] = $routePoints;
+                            $currentRoute['total_demand'] += $totalDemand;
+                            $visitedCustomers[] = $fromCustomer;
+                            $totalDemand = 0;
+                        } else {
+                            $routePoints[] = [
+                                'distance' => $saving['savings'],
+                                'location' => Pelanggan::find($fromCustomer)->name,
+                                'demand' => $remainingCapacity
+                            ];
+                            $currentRoute['points'] = $routePoints;
+                            $currentRoute['total_demand'] += $remainingCapacity;
+                            $totalDemand -= $remainingCapacity;
+                            $routes[] = $currentRoute;
+                            $routePoints = [];
+                            $truckIndex = ($truckIndex + 1) % $truckCount; // Move to the next truck
+                            $currentTruckName = $trucks[$truckIndex]->name;
+                            $currentRoute = [
+                                'truck_name' => $currentTruckName,
+                                'truck_capacity' => $trucks[$truckIndex]->kapasitas,
+                                'jarakPerliter' => $trucks[$truckIndex]->jarakPerliter,
+                                'points' => [],
+                                'total_demand' => 0
+                            ];
+                            $remainingCapacity = $trucks[$truckIndex]->kapasitas;
+                        }
+                    }
                 }
             }
     
             if (!empty($routePoints)) {
-                $routes[] = [
-                    'truck_name'        => $truck->name,
-                    'truck_capacity'    => $truck->kapasitas,
-                    'jarakPerliter'     => $truck->jarakPerliter,
-                    'points'            => $routePoints,
-                    'total_demand'      => $truck->kapasitas - $remainingCapacity
-                ];
+                $routes[] = $currentRoute;
             }
         }
+    
         return $routes;
     }
+    
+    
+    
     public function exportNearestNeighbors($id)
     {
         $distribusi = Distribusi::find($id);

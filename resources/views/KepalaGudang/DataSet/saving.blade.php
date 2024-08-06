@@ -189,27 +189,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($remainingDistances as $truckName => $routes)
+                                @foreach($groupedRoutes as $route)
                                     @php
-                                        // Temukan data yang sesuai untuk nama truk di groupedRoutes
-                                        $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
-                                        $totalDemand = $groupedRoute['total_demand'] ?? '-';
-                                        $fuelUsedPerKm = $groupedRoute['jarakPerliter'] ?? 0;
+                                        $truckName = $route['truck_name'];
+                                        $totalDemand = $route['total_demand'];
+                                        $fuelUsedPerKm = $route['jarakPerliter'];
                 
-                                        // Generate route string and total distance
                                         $routeStr = 'G-';
-                                        $routeStr .= $smallestDistances[$truckName]['location'] . '-';
-                                        $totalDistance = $smallestDistances[$truckName]['distance'];
-                                        foreach ($routes as $route) {
-                                            $routeStr .= $route['to_location'] . '-';
-                                            $totalDistance += $route['distance'];
+                                        $totalDistance = 0;
+                                        foreach ($route['points'] as $point) {
+                                            $routeStr .= $point['location'] . '-';
+                                            $totalDistance += $point['distance'];
                                         }
                                         $routeStr .= 'G';
                 
-                                        // Hitung pemakaian BBM total dan total biaya
-                                        $fuelUsage = $totalDistance / $fuelUsedPerKm; // Total pemakaian BBM (Liter)
-                                        $fuelPricePerLiter = 6800; // Harga solar per liter dalam Rupiah
-                                        $totalCost = $fuelUsage * $fuelPricePerLiter; // Total biaya dalam Rupiah
+                                        $fuelUsage = $totalDistance / $fuelUsedPerKm;
+                                        $fuelPricePerLiter = 6800;
+                                        $totalCost = $fuelUsage * $fuelPricePerLiter;
                                     @endphp
                                     <tr>
                                         <td>{{ $truckName }}</td>
@@ -225,6 +221,7 @@
                         </table>
                     </div>
                 </div>
+                
                 
                 
             </div>
