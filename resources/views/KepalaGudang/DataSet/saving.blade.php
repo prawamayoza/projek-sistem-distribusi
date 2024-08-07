@@ -165,6 +165,7 @@
                         </table>
                     </div>
                 </div>
+
                 @endrole
                 <div class="tab-pane fade" id="jarak" role="tabpanel" aria-labelledby="plan-tab">
                     <div class="d-flex justify-content-between align-items-center">

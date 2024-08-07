@@ -320,7 +320,7 @@ class DataSetController extends Controller
                 }
             }
         }
-        // dd($groupedRoutes);
+        
         // Return view with the necessary data
         return view('KepalaGudang.DataSet.saving', [
             'distribusi'            => $distribusi,
@@ -334,7 +334,7 @@ class DataSetController extends Controller
             'title'                 => 'Perhitungan'
         ]);
     }
-
+    
     private function groupRoutes($savingsWithTotals, $totalOrders)
     {
         $trucks = Kendaraan::where('status', 'Available')->get();
@@ -384,8 +384,62 @@ class DataSetController extends Controller
                 ];
             }
         }
+    
+        // Handle remaining customers if there are any unvisited
+        $remainingCustomers = array_diff(array_keys($totalOrders), $visitedCustomers);
+        while (!empty($remainingCustomers)) {
+            $truck = Kendaraan::where('status', 'Available')->first();
+            if (!$truck) {
+                break; // No more available trucks
+            }
+            $remainingCapacity = $truck->kapasitas;
+            $routePoints = [];
+    
+            // Re-sort savings for remaining customers
+            $sortedSavings = collect($savingsWithTotals)->flatMap(function ($toCustomers, $fromCustomer) use ($remainingCustomers) {
+                if (in_array($fromCustomer, $remainingCustomers)) {
+                    return collect($toCustomers)->map(function ($data, $toCustomer) use ($fromCustomer) {
+                        return [
+                            'from_customer' => $fromCustomer,
+                            'to_customer' => $toCustomer,
+                            'savings' => $data['savings'],
+                            'total_from_customer' => $data['total_from_customer']
+                        ];
+                    });
+                }
+                return [];
+            })->sortByDesc('savings');
+    
+            foreach ($sortedSavings as $saving) {
+                $fromCustomer = $saving['from_customer'];
+                $totalDemand = $totalOrders[$fromCustomer] ?? 0;
+    
+                if (!in_array($fromCustomer, $visitedCustomers) && $totalDemand > 0 && $totalDemand <= $remainingCapacity) {
+                    $routePoints[] = [
+                        'distance' => $saving['savings'],
+                        'location' => Pelanggan::find($fromCustomer)->name,
+                        'demand' => $totalDemand
+                    ];
+                    $remainingCapacity -= $totalDemand;
+                    $visitedCustomers[] = $fromCustomer;
+                }
+            }
+    
+            if (!empty($routePoints)) {
+                $routes[] = [
+                    'truck_name'        => $truck->name,
+                    'truck_capacity'    => $truck->kapasitas,
+                    'jarakPerliter'     => $truck->jarakPerliter,
+                    'points'            => $routePoints,
+                    'total_demand'      => $truck->kapasitas - $remainingCapacity
+                ];
+            }
+            $remainingCustomers = array_diff($remainingCustomers, $visitedCustomers);
+        }
+    
         return $routes;
     }
+
     public function exportNearestNeighbors($id)
     {
         $distribusi = Distribusi::find($id);
