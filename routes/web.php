@@ -38,3 +38,4 @@ Route::get('export-pesanan', function () {
 Route::post('/data-set/{id}/update-status', [DataSetController::class, 'updateStatus'])->name('data-set.update-status');
 Route::patch('/kendaraan/{id}/changeStatus', [KendaraanController::class, 'changeStatus'])->name('kendaraan.changeStatus');
 Route::get('export-nearest-neighbors/{id}', [DataSetController::class, 'exportNearestNeighbors'])->name('export.nearest.neighbors');
+Route::get('/export-nearest-neighbors', [DataSetController::class, 'exportdistribusi'])->name('export.distribusi');

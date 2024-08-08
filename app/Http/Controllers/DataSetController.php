@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AllNearestNeighborExport;
 use App\Exports\NearestNeighborExport;
 use App\Models\Distribusi;
 use App\Models\JarakGudang;
@@ -456,6 +457,20 @@ class DataSetController extends Controller
         return redirect()->back()->withErrors('Distribusi not found');
     }
     
+    public function exportdistribusi()
+    {
+        $distribusiList = Distribusi::all();
+    
+        if ($distribusiList->isNotEmpty()) {
+            $title = "Biaya Transportasi Semua Distribusi";
+            // Ensure title length does not exceed 31 characters
+            $title = substr($title, 0, 31);
+    
+            return Excel::download(new AllNearestNeighborExport, "{$title}.xlsx");
+        }
+    
+        return redirect()->back()->withErrors('No distributions found');
+    }
     /**
      * Display the specified resource.
      */

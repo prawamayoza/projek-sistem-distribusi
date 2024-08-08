@@ -7,11 +7,18 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Daftar Data Perhitungan Distribusi</h4>
-                    @role('kepala gudang')
-                    <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm">
-                        <i class="material-icons text-sm me-2">add</i>Tambah Data
-                    </a>
-                    @endrole
+                    <div>
+                        @role('kepala gudang')
+                            <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm">
+                                <i class="material-icons text-sm me-2">add</i>Tambah Data
+                            </a>
+                            @role(['manager', 'kepala gudang'])
+                                <a href="{{ route('export.distribusi') }}" class="btn btn-success btn-sm">
+                                    <i class="material-icons text-sm me-2">import_export</i>Export Data
+                                </a>
+                            @endrole
+                        @endrole
+                    </div>
                 </div>
 
                 <div class="card-body">
