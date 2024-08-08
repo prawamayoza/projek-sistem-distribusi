@@ -34,7 +34,7 @@ class DataSetController extends Controller
         // Ambil data berdasarkan peran pengguna
         if ($user->hasRole('driver')) {
             // Hanya tampilkan data dengan status 'Approve' untuk driver
-            $distribusi = Distribusi::where('status', 'Approve')->orderByDesc('created_at')->get();
+            $distribusi = Distribusi::whereIn('status', ['Approve','Done'])->orderByDesc('created_at')->get();
         } else {
             // Tampilkan semua data untuk kepala gudang dan manager
             $distribusi =   Distribusi::orderByDesc('created_at')->get();

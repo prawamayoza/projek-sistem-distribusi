@@ -22,7 +22,8 @@
                                 <thead>
                                     <tr>
                                         <th scope="col" class="text-center">Nomor</th>
-                                        <th scope="col" class="text-center">Nama</th>
+                                        <th scope="col" class="text-center">Kode Rute</th>
+                                        <th scope="col" class="text-center">Nama Pelanggan</th>
                                         <th scope="col" class="text-center">Alamat</th>
                                         <th scope="col" class="text-center">No telpon</th>
                                         <th scope="col" class="text-center">Aksi</th>
@@ -33,6 +34,7 @@
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td class="text-center">{{ $item->name }}</td>
+                                        <td class="text-center">{{ $item->pelanggan }}</td>
                                         <td class="text-center">{{ $item->alamat }}</td>
                                         <td class="text-center">{{ $item->no_telpon }}</td>
                                         <td class="text-center">
@@ -59,7 +61,8 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="text-center">Nomor</th>
-                                    <th scope="col" class="text-center">Nama</th>
+                                    <th scope="col" class="text-center">Kode Rute</th>
+                                    <th scope="col" class="text-center">Nama Pelanggan</th>
                                     <th scope="col" class="text-center">Alamat</th>
                                     <th scope="col" class="text-center">No telpon</th>
                                     {{-- <th scope="col">Aksi</th> --}}
@@ -70,6 +73,7 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">{{ $item->name }}</td>
+                                    <td class="text-center">{{ $item->pelanggan }}</td>
                                     <td class="text-center">{{ $item->alamat }}</td>
                                     <td class="text-center">{{ $item->no_telpon }}</td>
                                     {{-- <td>

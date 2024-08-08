@@ -38,11 +38,13 @@ class PelangganController extends Controller
         // Validate the request
         $request->validate([
             'name'          => 'required',
+            'pelanggan'     => 'required',
             'alamat'        => 'required',
             'no_telpon'     => 'required',
 
         ], [
-            'name.required'             => 'Nama Pelanggan Wajib Dipilih',
+            'name.required'             => 'Kode Rute Wajib Dipilih',
+            'pelanggan.required'        => 'Nama Pelanggan Wajib Dipilih',
             'alamat.required'           => 'Alamat Pelanggan Wajib Diisi',
             'no_telepon.required'       => 'No telpon Pelanggan Wajib Diisi',
 
@@ -51,6 +53,7 @@ class PelangganController extends Controller
         // Create a new Pelanggan
             Pelanggan::create([
             'name'          => $request->name,
+            'pelanggan'     => $request->pelanggan,
             'alamat'        => $request->alamat,
             'no_telpon'     => $request->no_telpon,
 
@@ -89,20 +92,23 @@ class PelangganController extends Controller
         // Validate the request
         $request->validate([
             'name'          => 'required',
+            'pelanggan'     => 'required',
             'alamat'        => 'required',
             'no_telpon'     => 'required',
 
         ], [
-            'name.required'       => 'Nama Pelanggan Wajib Dipilih',
-            'alamat.required'     => 'Alamat Pelanggan Wajib Diisi',
-            'no_telepon'          => 'No telepon Wajib Diisi'
+            'name.required'             => 'Kode Rute Wajib Dipilih',
+            'pelanggan.required'        => 'Nama Pelanggan Wajib Dipilih',
+            'alamat.required'           => 'Alamat Pelanggan Wajib Diisi',
+            'no_telepon.required'       => 'No telpon Pelanggan Wajib Diisi',
         ]);
 
         // Update the Pelanggan
         $pelanggan->update([
-            'name'    => $request->name,
-            'alamat'  => $request->alamat,
-            'no_telepon'
+            'name'      => $request->name,
+            'pelanggan' => $request->pelanggan,
+            'alamat'    => $request->alamat,
+            'no_telpon'=> $request->no_telpon
         ]);
         return redirect()->route('pelanggan.index')->with('success', 'Data Berhasil Diperbarui');
     }

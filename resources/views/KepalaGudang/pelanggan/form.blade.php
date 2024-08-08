@@ -32,10 +32,22 @@
                     {{ csrf_field() }}
 
                     <div class="input-group input-group-dynamic mb-4">
-                        <label for="name" class="col-md-4 col-form-label text-md-right">Nama</label>
+                        <label for="name" class="col-md-4 col-form-label text-md-right">Kode Rute</label>
                         <div class="col-md-6">
                             <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', @$pelanggan->name) }}" required autocomplete="name" autofocus placeholder="Nama Pelanggan" aria-label="Nama" aria-describedby="basic-addon1">
                             @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="input-group input-group-dynamic mb-4">
+                        <label for="pelanggan" class="col-md-4 col-form-label text-md-right">Nama Pelanggan</label>
+                        <div class="col-md-6">
+                            <input id="pelanggan" type="text" class="form-control @error('pelanggan') is-invalid @enderror" name="pelanggan" value="{{ old('pelanggan', @$pelanggan->pelanggan) }}" required autocomplete="pelanggan" autofocus placeholder="Nama Pelanggan" aria-label="Nama" aria-describedby="basic-addon1">
+                            @error('pelanggan')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
