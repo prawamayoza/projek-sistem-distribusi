@@ -9,7 +9,12 @@
                     <h4 class="mb-0">Daftar Data Perhitungan Distribusi</h4>
                     <div>
                         @role('kepala gudang')
-                            <a href="{{ route('data-set.create') }}" class="btn btn-success btn-sm">
+                            @php
+                                // Get the last distribution item
+                                $lastDistribusi = $distribusi->last();
+                            @endphp
+                            <a href="{{ route('data-set.create') }}" 
+                               class="btn btn-success btn-sm {{ $lastDistribusi && $lastDistribusi->status !== 'Done' ? 'disabled' : '' }}">
                                 <i class="material-icons text-sm me-2">add</i>Tambah Data
                             </a>
                             @role(['manager', 'kepala gudang'])
@@ -51,12 +56,12 @@
                                             <i class="material-icons text-sm me-2">calculate</i> Perhitungan
                                         </a>
                                         @role('manager')
-                                            @if($item->status !== 'Approve')
+                                            @if($item->status === 'Waiting')
                                             <form action="{{ route('data-set.update-status', $item->id) }}" method="POST" style="display: inline;">
                                                 @csrf
-                                                <input type="hidden" name="status" value="{{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}">
-                                                <button type="submit" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Update Status">
-                                                    <i class="material-icons text-sm me-2">update</i> {{ $item->status === 'Approve' ? 'Waiting' : 'Approve' }}
+                                                <input type="hidden" name="status" value="Approve">
+                                                <button type="submit" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Update Status to Approve">
+                                                    <i class="material-icons text-sm me-2">update</i> Approve
                                                 </button>
                                             </form>
                                             @endif
@@ -65,6 +70,15 @@
                                             </a>
                                         @endrole
                                         @role('kepala gudang')
+                                            @if($item->status === 'Approve')
+                                            <form action="{{ route('data-set.update-status', $item->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                <input type="hidden" name="status" value="Done">
+                                                <button type="submit" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Update Status to Done">
+                                                    <i class="material-icons text-sm me-2">done</i> Done
+                                                </button>
+                                            </form>
+                                            @endif
                                             <a href="{{ route('data-set.show', $item->id) }}" class="btn btn-info btn-sm">
                                                 <i class="material-icons text-sm me-2">remove_red_eye</i>Detail
                                             </a>

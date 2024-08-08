@@ -65,16 +65,36 @@ class DataSetController extends Controller
             return redirect()->back()->with('error', 'Distribusi not found.');
         }
         
-        // Validate and update the status
+        // Validate the request
         $validated = $request->validate([
-            'status' => 'required|string|in:Approve,Waiting', // Adjust validation as needed
+            'status' => 'required|string|in:Approve,Waiting,Done', // Adjust validation as needed
         ]);
-
-        $distribusi->status = $validated['status'];
+    
+        $newStatus = $validated['status'];
+    
+        // Check the user's role and validate the status change
+        if (auth()->user()->hasRole('kepala gudang')) {
+            if ($distribusi->status === 'Approve' && $newStatus === 'Done') {
+                $distribusi->status = 'Done';
+            } else {
+                return redirect()->back()->with('error', 'Unauthorized status change.');
+            }
+        } elseif (auth()->user()->hasRole('manager')) {
+            if ($distribusi->status === 'Waiting' && $newStatus === 'Approve') {
+                $distribusi->status = 'Approve';
+            } else {
+                return redirect()->back()->with('error', 'Unauthorized status change.');
+            }
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized user.');
+        }
+    
+        // Save the updated status
         $distribusi->save();
-
+    
         return redirect()->back()->with('success', 'Status updated successfully.');
     }
+    
     /**
      * Store a newly created resource in storage.
      */
