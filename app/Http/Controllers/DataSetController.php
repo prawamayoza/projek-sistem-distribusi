@@ -342,6 +342,71 @@ class DataSetController extends Controller
             }
         }
         
+        $biayaDistances = [];
+        // Loop through each truck to find the remaining distances
+        foreach ($nearestRoutes as $truckName => $points) {
+            $visitedLocations = collect([$smallestDistances[$truckName]['location']]);
+            $currentLocation = $smallestDistances[$truckName]['location'];
+
+            // If the truck has only one delivery point, add the route back to the warehouse
+            if (count($points) == 1) {
+                $singlePoint = $points[0];
+                $distanceToWarehouse = JarakPelanggan::where('from_customer', $singlePoint['location'])
+                                    ->where('to_customer', 'Warehouse')->first()->distance ?? 0;
+
+                $biayaDistances[$truckName][] = [
+                    'from_location' => $singlePoint['location'],
+                    'to_location' => 'Warehouse',
+                    'distance' => $distanceToWarehouse
+                ];
+                continue;
+            }
+
+            while ($visitedLocations->count() < count($points)) {
+                $minDistance = null;
+                $nextLocation = null;
+
+                foreach ($points as $point) {
+                    if (!$visitedLocations->contains($point['location'])) {
+                        $fromCustomer = Pelanggan::where('name', $currentLocation)->first();
+                        $toCustomer = Pelanggan::where('name', $point['location'])->first();
+
+                        if ($fromCustomer && $toCustomer) {
+                            // Check for distance in both directions
+                            $distanceRecord = JarakPelanggan::where('from_customer', $fromCustomer->id)
+                                ->where('to_customer', $toCustomer->id)
+                                ->first();
+
+                            if (!$distanceRecord) {
+                                $distanceRecord = JarakPelanggan::where('from_customer', $toCustomer->id)
+                                    ->where('to_customer', $fromCustomer->id)
+                                    ->first();
+                            }
+
+                            $distanceValue = $distanceRecord ? $distanceRecord->distance : 0;
+
+                            if (is_null($minDistance) || $distanceValue < $minDistance) {
+                                $minDistance = $distanceValue;
+                                $nextLocation = $point['location'];
+                            }
+                        }
+                    }
+                }
+
+                if ($nextLocation) {
+                    $biayaDistances[$truckName][] = [
+                        'from_location' => $currentLocation,
+                        'to_location' => $nextLocation,
+                        'distance' => $minDistance
+                    ];
+                    $visitedLocations->push($nextLocation);
+                    $currentLocation = $nextLocation;
+                } else {
+                    break; // No more unvisited locations
+                }
+            }
+        }
+
         // Return view with the necessary data
         return view('KepalaGudang.DataSet.saving', [
             'distribusi'            => $distribusi,
@@ -352,6 +417,7 @@ class DataSetController extends Controller
             'nearestRoutes'         => $nearestRoutes, // Pass nearest routes data
             'smallestDistances'     => $smallestDistances, // Pass smallest distances data
             'remainingDistances'    => $remainingDistances, // Pass remaining distances data
+            'biayaDistances'        => $biayaDistances, // Pass remaining distances data
             'title'                 => 'Perhitungan'
         ]);
     }

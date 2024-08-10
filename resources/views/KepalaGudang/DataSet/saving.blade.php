@@ -190,7 +190,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($remainingDistances as $truckName => $routes)
+                                @foreach($biayaDistances as $truckName => $routes)
                                 @php
                                     // Find the corresponding data for the truck name in groupedRoutes
                                     $groupedRoute = collect($groupedRoutes)->firstWhere('truck_name', $truckName);
@@ -203,8 +203,10 @@
                                     $totalDistance = $smallestDistances[$truckName]['distance'];
                             
                                     foreach ($routes as $route) {
-                                        $routeStr .= $route['to_location'] . '-';
-                                        $totalDistance += $route['distance'];
+                                        if ($route['to_location'] !== 'Warehouse') { // Check if to_location is not "Warehouse"
+                                            $routeStr .= $route['to_location'] . '-';
+                                            $totalDistance += $route['distance'];
+                                        }
                                     }
                                     $routeStr .= 'G';
                             
@@ -222,9 +224,9 @@
                                     <td>Rp. {{ number_format($totalCost, 0) }}</td>
                                     <td>{{ $totalDemand }} (Box)</td>
                                 </tr>
-                            @endforeach
-                            
+                                @endforeach
                             </tbody>
+                            
                         </table>
                     </div>
                 </div>
