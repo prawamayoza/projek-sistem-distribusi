@@ -11,7 +11,7 @@
                         @role('kepala gudang')
                             @php
                                 // Get the last distribution item
-                                $lastDistribusi = $distribusi->last();
+                                $lastDistribusi = $distribusi->first();
                             @endphp
                             <a href="{{ route('data-set.create') }}" 
                                class="btn btn-success btn-sm {{ $lastDistribusi && $lastDistribusi->status !== 'Done' ? 'disabled' : '' }}">

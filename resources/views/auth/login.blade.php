@@ -53,7 +53,7 @@
                     @enderror
                   </div>
                   <div class="text-center">
-                    <button type="submit" class="btn bg-gradient-info w-100 my-4 mb-2">Sign in</button>
+                    <button type="submit" class="btn bg-gradient-info w-100 my-4 mb-2">Login</button>
                   </div>
                 </form>
               </div>
