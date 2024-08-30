@@ -37,11 +37,13 @@
                                     <td class="text-center">{{ $item->jarakPerliter }} </td>
                                     <td class="text-center">
                                         <div class="form-check form-switch">
+                                            @role('kepala gudang')
                                             <input class="form-check-input toggle-status" type="checkbox"
                                                    data-id="{{ $item->id }}"
                                                    id="statusSwitch{{ $item->id }}"
                                                    {{ $item->status === 'Available' ? 'checked' : '' }}>
-                                            <label class="form-check-label {{ $item->status === 'Available' ? 'text-success' : 'text-danger' }}"
+                                            @endrole
+                                                   <label class="form-check-label {{ $item->status === 'Available' ? 'text-success' : 'text-danger' }}"
                                                    for="statusSwitch{{ $item->id }}">{{ $item->status }}</label>
                                         </div>
                                     </td>
